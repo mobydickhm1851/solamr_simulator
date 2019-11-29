@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<launch>
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="paused" value="true"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Spawn a robot into Gazebo -->
+  <node name="spawn_sdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find amr_description)/urdf/model.sdf -sdf -z 0.1 -model turtlebot" />
+
+<?ignore
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot3_waffle -x 2 -y 2 -z 0.5 -param robot_description" />
+?>
+
+  <node name="spawn" pkg="gazebo_ros" type="spawn_model" args="-file $(find amr_description)/urdf/stl_test.urdf -urdf -x 1.2 -y 1 -z 1 -model sth" />
+
+  <param name="robot_description_amr" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro" />
+  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model slamr -x 1 -y 1 -z 0.5 -param robot_description_amr" />
+
+
+</launch>
