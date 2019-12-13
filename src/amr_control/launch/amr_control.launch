@@ -10,13 +10,12 @@
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
     output="screen" args="blocker_position_controller joint_state_controller"/>
 
-  <!-- convert joint states to TF transforms for rviz, etc -->
+<!-- convert joint states to TF transforms for rviz, etc --> 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
     <param name="tf_prefix" value="$(arg robot_ns)"/>
-    <!--
     <remap from="robot_description" to="/$(arg robot_ns)/robot_description" />
     <remap from="/joint_states" to="/$(arg robot_ns)/joint_states" />
-    -->
   </node>
+    
 </launch>

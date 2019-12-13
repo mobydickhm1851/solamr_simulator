@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+<!-- Conveyor Begin -->
+
+  <model name="assembly_line">
+    <static>true</static>
+    <link name="conveyor_belt_0">
+      <collision name="collision_belt_side_back_0">
+        <pose>-4 4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_0">
+        <pose>-4 4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_1">
+      <collision name="collision_belt_side_back_1">
+        <pose>-4 0 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_1">
+        <pose>-4 0 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_2">
+      <collision name="collision_belt_side_back_2">
+        <pose>-4 -4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_2">
+        <pose>-4 -4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_3">
+      <collision name="collision_belt_side_back_3">
+        <pose>4 4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_3">
+        <pose>4 4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_4">
+      <collision name="collision_belt_side_back_4">
+        <pose>4 0 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_4">
+        <pose>4 0 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_5">
+      <collision name="collision_belt_side_back_5">
+        <pose>4 -4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_5">
+        <pose>4 -4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_6">
+      <collision name="collision_belt_side_back_6">
+        <pose>8 4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_6">
+        <pose>8 4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_7">
+      <collision name="collision_belt_side_back_7">
+        <pose>8 0 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_7">
+        <pose>8 0 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_8">
+      <collision name="collision_belt_side_back_8">
+        <pose>8 -4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_8">
+        <pose>8 -4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_9">
+      <collision name="collision_belt_side_back_9">
+        <pose>-8 4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_9">
+        <pose>-8 4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_10">
+      <collision name="collision_belt_side_back_10">
+        <pose>-8 0 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_10">
+        <pose>-8 0 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <link name="conveyor_belt_11">
+      <collision name="collision_belt_side_back_11">
+        <pose>-8 -4 0.78 1.57 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual_11">
+        <pose>-8 -4 0.78 1.57 0 0</pose>
+            <material> <!-- Wheel material -->
+              <ambient>0.3137 0.4 0.4824 1</ambient>
+              <diffuse>0.3137 0.4 0.4824 1</diffuse>
+              <specular>0.3137 0.4 0.4824 1</specular>
+              <emissive>0 0 0 1</emissive>
+            </material>
+        <geometry>
+          <mesh>
+            <scale> .01 .01 .01 </scale>
+            <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+
+<!-- Conveyor End-->
+</sdf>

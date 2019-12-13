@@ -10,7 +10,7 @@ from math import pi as PI
 
 
 
-maxVel = 10.0
+maxVel = 1.0
 minVel = -maxVel
 accele = 0.0035
 brake = accele*2.86
@@ -27,10 +27,11 @@ throttleInit = False
 brakeInit = False
 
 locker_dir = 0  # Locking direction, 1 = CW, -1 = CCW
-BLOCKER_OMEGA = 0.025
+BLOCKER_OMEGA = 0.0525
 locker_ang = 0
 target_angle = 0
 blocker_init = False
+locker_state = False
 
 # gear state (D/N/R, sum(gear)=1/sum(gear)=0/sum(gear)=-1)
 gear = [1,-1]
@@ -124,16 +125,18 @@ def lockerAngleUpdate(angle):
     locker_ang = angle.process_value
 
 def lockAction(A_button_pressed, X_button_pressed):
-    global locker_dir, blocker_init
+    global locker_dir, blocker_init, locker_state
 
-    current_angle = float(locker_ang % PI)
+    current_angle = float(round(locker_ang, 3) % PI)
     residual = 0
 
     if X_button_pressed :
         locker_dir = 0
+        locker_state = True
         return locker_ang
      
     if A_button_pressed :
+        locker_state = True
         if locker_dir == 0 :
             if not blocker_init:
                 blocker_init = True
@@ -142,17 +145,21 @@ def lockAction(A_button_pressed, X_button_pressed):
                 locker_dir = (current_angle - PI/2)/abs(current_angle - PI/2)
         else : locker_dir *= -1  
     
-    if locker_dir == 1: 
-        residual = PI - current_angle
-    elif locker_dir == -1:
-        residual = current_angle - 0
+    if locker_state : 
+        if locker_dir == 1: 
+            residual = PI - current_angle
+        elif locker_dir == -1:
+            residual = current_angle - 0
 
-    print("locker_dir:{0}, current_angle:{1}, residual:{2}, target_angle:{3}".format(locker_dir, current_angle, residual, target_angle))
+        #print("locker_dir:{0}, current_angle:{1}, residual:{2}, target_angle:{3}".format(locker_dir, current_angle, residual, target_angle))
 
-
-    if residual > BLOCKER_OMEGA:
-        return locker_ang + locker_dir*BLOCKER_OMEGA
-    else : return locker_ang
+        if residual > BLOCKER_OMEGA:
+            return locker_ang + locker_dir*BLOCKER_OMEGA
+        else : 
+            locker_state = False
+            return locker_ang
+    else : 
+        return locker_ang
 
 
 

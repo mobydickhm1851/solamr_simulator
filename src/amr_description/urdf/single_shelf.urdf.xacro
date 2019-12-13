@@ -22,7 +22,7 @@
 <!-- ####  leg property #### -->
 <xacro:property name="leg_radius" value="0.025"/>
 <xacro:property name="leg_length" value="0.32"/>
-<xacro:property name="leg_mass" value=".5"/>
+<xacro:property name="leg_mass" value="1"/>
 
 <!-- #####  leg macro  ##### -->
 <xacro:macro name="leg" params= "prefix suffix X1 X2 Y1 Y2">
@@ -35,7 +35,7 @@
   </joint>
 
   <link name= "${prefix}_${suffix}_leg">
-<!--
+    <!--
     <visual>
       <origin rpy= "0 0 0" xyz= "0 0 0"/>
       <geometry>   
@@ -43,7 +43,7 @@
       </geometry>
       <material name= "light_black"/>
     </visual>
--->
+-->`
     <collision>
       <origin rpy= "0 0 0" xyz= "0 0 0"/>
       <geometry>
@@ -55,10 +55,12 @@
          
      
   <gazebo reference ="${prefix}_${suffix}_leg">
-    <mu1 value=".02"/>
-    <mu2 value=".02"/>
+    <mu1 value=".005"/>
+    <mu2 value=".005"/>
     <kp value="10000000.0"/>
-    <kd value= "1.0"/>
+    <kd value= "10.0"/>
+    <maxVel>0.</maxVel>
+    <minDepth>0.001</minDepth>
   </gazebo>
                  
 </xacro:macro>
@@ -71,6 +73,7 @@
         <mesh filename="package://amr_description/meshes/only_shelf.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </visual>
+
     <collision>
        <origin rpy="0 0 0" xyz="0 0 ${leg_length + body_height/2}"/>
        <geometry>
@@ -78,7 +81,7 @@
        </geometry>
      </collision>
      <inertial>
-         <mass value="50.0"/>
+         <mass value="1.0"/>
               <inertia ixx="1.3542" ixy="0.0"
                        iyy="1.3542" iyz="0.0"
                        izz="1.3542" ixz="0.0"/>
@@ -107,15 +110,22 @@
     <visual>
       <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
       <geometry>
+        <!--
         <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
+-->
+        <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="light_black"/>
     </visual>
 
     <collision>
+      <max_contacts>1</max_contacts>
       <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
       <geometry>
+        <!--
         <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
+-->
+        <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </collision>
     
@@ -129,6 +139,12 @@
   </link>
 
   <gazebo reference="B_bot">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
+      <kp>1000000</kp> 
+      <kd>10</kd>
+      <maxVel>0.</maxVel>
+      <minDepth>0.001</minDepth>
       <material>Gazebo/Wood</material>
   </gazebo>
 

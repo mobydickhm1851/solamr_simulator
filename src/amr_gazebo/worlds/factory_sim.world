@@ -79,52 +79,121 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
-    <model name='number1'>
-      <pose frame=''>-1.4079 2.40269 0.4 0 -0 0</pose>
-      <static>1</static>
-      <link name='link'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://number1/meshes/number.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://number1/materials/scripts</uri>
-              <uri>model://number1/materials/textures</uri>
-              <name>Number/One</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-    </model>
-    <model name='number6'>
-      <pose frame=''>0.577632 -0.45945 0.4 0 -0 0</pose>
-      <static>1</static>
-      <link name='link'>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://number1/meshes/number.dae</uri>
-            </mesh>
-          </geometry>
-          <material>
-            <script>
-              <uri>model://number6/materials/scripts</uri>
-              <uri>model://number6/materials/textures</uri>
-              <name>Number/Six</name>
-            </script>
-          </material>
-        </visual>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
-      </link>
-    </model>
+    <state world_name='default'>
+      <sim_time>511 881000000</sim_time>
+      <real_time>31 656470077</real_time>
+      <wall_time>1576145484 623865587</wall_time>
+      <iterations>22176</iterations>
+      <model name='assembly_line'>
+        <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='conveyor_belt_0'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_1'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_10'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_11'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_2'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_3'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_4'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_5'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_6'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_7'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_8'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+        <link name='conveyor_belt_9'>
+          <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='person_standing'>
+        <pose frame=''>6.0973 2.07745 5e-06 1e-06 1e-06 6.5e-05</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>7.09762 -2.82248 0 1e-06 1e-06 6.5e-05</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>1.60946 -1.13201 -1.51555 -1.93828 1.45572 -3.09684</acceleration>
+          <wrench>128.756 -90.561 -121.244 0 -0 0</wrench>
+        </link>
+      </model>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
+      </light>
+    </state>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-6.45694 23.8658 31.8651 0 0.909798 -1.60052</pose>
+        <view_controller>orbit</view_controller>
+        <projection_type>perspective</projection_type>
+      </camera>
+    </gui>
     <model name='person_standing'>
       <link name='link'>
+        <pose frame=''>1 -4.9 -0 0 -0 0</pose>
         <inertial>
           <pose frame=''>0 -0.1 0.95 0 -0 0</pose>
           <mass>80</mass>
@@ -137,70 +206,149 @@
             <izz>2.48</izz>
           </inertia>
         </inertial>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+        <visual name='visual'>
+          <pose frame=''>0 0 0.02 0.04 -0 0</pose>
+          <geometry>
+            <mesh>
+              <uri>model://person_standing/meshes/standing.dae</uri>
+            </mesh>
+          </geometry>
+          <material>
+            <shader type='pixel'>
+              <normal_map>__default__</normal_map>
+            </shader>
+          </material>
+          <cast_shadows>1</cast_shadows>
+          <transparency>0</transparency>
+        </visual>
         <collision name='bottom'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
           <pose frame=''>0 -0.1 0.01 0 -0 0</pose>
           <geometry>
             <box>
               <size>0.5 0.35 0.02</size>
             </box>
           </geometry>
-          <max_contacts>10</max_contacts>
           <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
             <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
               <torsional>
-                <ode/>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
               </torsional>
-              <ode/>
             </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
           </surface>
         </collision>
         <collision name='person'>
+          <laser_retro>0</laser_retro>
+          <max_contacts>10</max_contacts>
           <pose frame=''>0 0 0.02 0.04 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model://person_standing/meshes/standing.dae</uri>
+              <uri>/home/liuyc/.gazebo/models/person_standing/meshes/standing.dae</uri>
+              <scale>1 1 1</scale>
             </mesh>
           </geometry>
-          <max_contacts>10</max_contacts>
           <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
             <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+                <fdir1>0 0 0</fdir1>
+                <slip1>0</slip1>
+                <slip2>0</slip2>
+              </ode>
               <torsional>
-                <ode/>
+                <coefficient>1</coefficient>
+                <patch_radius>0</patch_radius>
+                <surface_radius>0</surface_radius>
+                <use_patch_radius>1</use_patch_radius>
+                <ode>
+                  <slip>0</slip>
+                </ode>
               </torsional>
-              <ode/>
             </friction>
+            <bounce>
+              <restitution_coefficient>0</restitution_coefficient>
+              <threshold>1e+06</threshold>
+            </bounce>
+            <contact>
+              <collide_without_contact>0</collide_without_contact>
+              <collide_without_contact_bitmask>1</collide_without_contact_bitmask>
+              <collide_bitmask>1</collide_bitmask>
+              <ode>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+                <max_vel>0.01</max_vel>
+                <min_depth>0</min_depth>
+              </ode>
+              <bullet>
+                <split_impulse>1</split_impulse>
+                <split_impulse_penetration_threshold>-0.01</split_impulse_penetration_threshold>
+                <soft_cfm>0</soft_cfm>
+                <soft_erp>0.2</soft_erp>
+                <kp>1e+13</kp>
+                <kd>1</kd>
+              </bullet>
+            </contact>
           </surface>
         </collision>
-        <visual name='visual'>
-          <pose frame=''>0 0 0.02 0.04 -0 0</pose>
-          <geometry>
-            <mesh>
-              <uri>model://person_standing/meshes/standing.dae</uri>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <kinematic>0</kinematic>
       </link>
-      <pose frame=''>6.09737 2.07747 0 0 -0 0</pose>
+      <static>0</static>
+      <allow_auto_disable>1</allow_auto_disable>
+      <pose frame=''>6.09737 2.07747 0 0 1e-06 5.1e-05</pose>
     </model>
-    <model name='table_marble'>
+    <model name='assembly_line'>
       <static>1</static>
-      <pose frame=''>5.0724 -0.809777 0.648 0 -0 0</pose>
-      <link name='link'>
-        <collision name='collision'>
+      <link name='conveyor_belt_0'>
+        <collision name='collision_belt_side_back_0'>
+          <pose frame=''>-4 4 0.78 1.57 -0 0</pose>
           <geometry>
             <mesh>
-              <uri>model:///table_marble/meshes/table_lightmap.dae</uri>
-              <scale>0.25 0.25 0.25</scale>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -217,91 +365,476 @@
             </friction>
           </surface>
         </collision>
-        <visual name='visual'>
+        <visual name='visual_0'>
+          <pose frame=''>-4 4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
           <geometry>
             <mesh>
-              <uri>model://table_marble/meshes/table_lightmap.dae</uri>
-              <scale>0.25 0.25 0.25</scale>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
             </mesh>
           </geometry>
-          <material>
-            <script>
-              <uri>model://table_marble/materials/scripts</uri>
-              <uri>model://table_marble/materials/textures</uri>
-              <name>Table/Marble_Lightmap</name>
-            </script>
-            <lighting>0</lighting>
-          </material>
         </visual>
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
       </link>
+      <link name='conveyor_belt_1'>
+        <collision name='collision_belt_side_back_1'>
+          <pose frame=''>-4 0 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_1'>
+          <pose frame=''>-4 0 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_2'>
+        <collision name='collision_belt_side_back_2'>
+          <pose frame=''>-4 -4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_2'>
+          <pose frame=''>-4 -4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_3'>
+        <collision name='collision_belt_side_back_3'>
+          <pose frame=''>4 4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_3'>
+          <pose frame=''>4 4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_4'>
+        <collision name='collision_belt_side_back_4'>
+          <pose frame=''>4 0 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_4'>
+          <pose frame=''>4 0 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_5'>
+        <collision name='collision_belt_side_back_5'>
+          <pose frame=''>4 -4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_5'>
+          <pose frame=''>4 -4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_6'>
+        <collision name='collision_belt_side_back_6'>
+          <pose frame=''>8 4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_6'>
+          <pose frame=''>8 4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_7'>
+        <collision name='collision_belt_side_back_7'>
+          <pose frame=''>8 0 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_7'>
+          <pose frame=''>8 0 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_8'>
+        <collision name='collision_belt_side_back_8'>
+          <pose frame=''>8 -4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_8'>
+          <pose frame=''>8 -4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_9'>
+        <collision name='collision_belt_side_back_9'>
+          <pose frame=''>-8 4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_9'>
+          <pose frame=''>-8 4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_10'>
+        <collision name='collision_belt_side_back_10'>
+          <pose frame=''>-8 0 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_10'>
+          <pose frame=''>-8 0 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <link name='conveyor_belt_11'>
+        <collision name='collision_belt_side_back_11'>
+          <pose frame=''>-8 -4 0.78 1.57 -0 0</pose>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual_11'>
+          <pose frame=''>-8 -4 0.78 1.57 -0 0</pose>
+          <material>
+            <ambient>0.3137 0.4 0.4824 1</ambient>
+            <diffuse>0.3137 0.4 0.4824 1</diffuse>
+            <specular>0.3137 0.4 0.4824 1</specular>
+            <emissive>0 0 0 1</emissive>
+          </material>
+          <geometry>
+            <mesh>
+              <scale>0.01 0.01 0.01</scale>
+              <uri>model://conveyor_belt/meshes/Conveyor_Belt.stl</uri>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <kinematic>0</kinematic>
+      </link>
+      <pose frame=''>-1.93758 -0.8613 0 0 -0 0</pose>
     </model>
-    <state world_name='default'>
-      <sim_time>237 679000000</sim_time>
-      <real_time>238 387963822</real_time>
-      <wall_time>1575171225 671784240</wall_time>
-      <iterations>237679</iterations>
-      <model name='ground_plane'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>0 0 0 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='number1'>
-        <pose frame=''>-1.4079 2.40269 0.4 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>-1.4079 2.40269 0.4 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='number6'>
-        <pose frame=''>0.577632 -0.45945 0.4 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>0.577632 -0.45945 0.4 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='person_standing'>
-        <pose frame=''>6.0974 2.07747 -1e-06 -1e-06 1e-06 -0.00027</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>6.0974 2.07747 -1e-06 -1e-06 1e-06 -0.00027</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>1.61995 1.13914 -1.46637 1.93374 1.44756 3.09462</acceleration>
-          <wrench>129.596 91.1314 -117.31 0 -0 0</wrench>
-        </link>
-      </model>
-      <model name='table_marble'>
-        <pose frame=''>5.0724 -0.809777 0.648 0 -0 0</pose>
-        <scale>1 1 1</scale>
-        <link name='link'>
-          <pose frame=''>5.0724 -0.809777 0.648 0 -0 0</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 0 0 -0 0</acceleration>
-          <wrench>0 0 0 0 -0 0</wrench>
-        </link>
-      </model>
-      <light name='sun'>
-        <pose frame=''>0 0 10 0 -0 0</pose>
-      </light>
-    </state>
-    <gui fullscreen='0'>
-      <camera name='user_camera'>
-        <pose frame=''>12.3465 -10.1549 5.62754 0 0.169796 2.3802</pose>
-        <view_controller>orbit</view_controller>
-        <projection_type>perspective</projection_type>
-      </camera>
-    </gui>
   </world>
 </sdf>

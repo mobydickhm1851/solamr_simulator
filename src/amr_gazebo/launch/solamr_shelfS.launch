@@ -2,7 +2,10 @@
 
 <launch>
 
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <arg name="use_rviz" default="true" /> 
+  <arg name="use_joy" default="true" /> 
+
+<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
     <arg name="paused" value="false"/>
@@ -10,67 +13,69 @@
     <arg name="gui" value="true"/>
     <arg name="recording" value="false"/>
     <arg name="debug" value="false"/>
+    <arg name="verbose" value="true"/>
   </include>
 
-  <!-- Spawn a robot into Gazebo -->
-<?ignore
-  <node name="spawn_sdf" pkg="gazebo_ros" type="spawn_model" args="-file $(find amr_description)/urdf/model.sdf -sdf -z 0.1 -model turtlebot" />
+<!-- Spawn robots into Gazebo -->
 
-  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find turtlebot3_description)/urdf/turtlebot3_waffle.urdf.xacro" />
-  <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf" args="-urdf -model turtlebot3_waffle -x 2 -y 2 -z 0.5 -param robot_description" />
-
-
-  <node name="spawn_single_shelf" pkg="gazebo_ros" type="spawn_model" args="-file $(find amr_description)/urdf/com_single_shelf.urdf -urdf -x 2 -y 1. -z 0  -model single_shelf" />
-?>
-
-<!-- Spawn a single_shelf in Gazebo -->
-<group ns="shelf_S">
-    <arg name="robot_name" value="shelf_S"/>
-    <param name="tf_prefix" value="$(arg robot_name)" />  
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/single_shelf.urdf.xacro robotName:=$(arg robot_name)" />
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -param robot_description" />
-</group>
+    <!-- Spawn a single_shelf in Gazebo -->
+    <group ns="shelf_S">
+        <arg name="robot_name" value="shelf_S"/>
+        <param name="tf_prefix" value="$(arg robot_name)" />  
+        <!-- interpret xacro into urdf-->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/single_shelf.urdf.xacro robotName:=$(arg robot_name)" />
+        <!-- spawn model from parameter server : robot_description -->
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -param robot_description" />
+    </group>
 
 
-
-<group ns="solamr_1">
-    <arg name="robot_name" value="solamr_1"/>
-    <param name="tf_prefix" value="$(arg robot_name)" />  
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 1 -y 1 -z 0 -param robot_description" />
-    <include file="$(find amr_control)/launch/amr_control.launch">
-        <arg name="robot_ns" value="$(arg robot_name)" />
-    </include>
-</group>
+    <!-- Spawn a single_shelf in Gazebo -->
+    <group ns="solamr_1">
+        <arg name="robot_name" value="solamr_1"/>
+        <param name="tf_prefix" value="$(arg robot_name)" />  
+        <!-- interpret xacro into urdf-->
+        <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
+        <!-- spawn model from parameter server : robot_description -->
+        <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 0 -y 0 -z 0 -param robot_description" />
+        <!-- control file: controller spawner, robot_state_publisher -->
+        <include file="$(find amr_control)/launch/amr_control.launch">
+            <arg name="robot_ns" value="$(arg robot_name)" />
+        </include>
+    </group>
 
 <?ignore
 ?>
 
-<!-- solamr control using joystick -->
+
+<!-- joy teleop -->
     <!--
     <arg name="single" default="true"/>
     -->
 
-    <arg name="joy_maxVel" value=".5" />
-    <arg name="joy_accele" value=".001"/>
-
-<!-- joy teleop -->
-<!--============-->
+    <arg name="joy_maxVel" value="1." />
+    <arg name="joy_accele" value=".01"/>
 
     <!-- solamr_1 -->
-    <node pkg="amr_gazebo" type="teleop_joy.py" name="solamr_1_teleop" output="screen">
+    <node pkg="amr_gazebo" type="teleop_joy.py" name="solamr_1_teleop" output="screen" if="$(arg use_joy)">
         <param name="robot_ns" value="solamr_1" />
         <param name="max_velocity" value="$(arg joy_maxVel)" />
         <param name="acceleration" value="$(arg joy_accele)" />
     </node>
 
-    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" >
+    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" if="$(arg use_joy)">
         <param name="dev" type="string" value="/dev/input/js0" />
         <remap from="/joy" to="/solamr_1/joy" />
 	    <param name="deadzone" value="0.0" />
 	    <param name="autorepeat_rate" value="130" />
     </node>
 
+<!-- keyboard teleop -->
+    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_1_teleop" unless="$(arg use_joy)">
+        <param name="robot_ns" value="solamr_1" />
+    </node>
 
+
+<!-- rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/single_solamr.rviz" if="$(arg use_rviz)" />
 
 </launch>
