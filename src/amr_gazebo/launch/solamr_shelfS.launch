@@ -4,13 +4,15 @@
 
   <arg name="use_rviz" default="true" /> 
   <arg name="use_joy" default="true" /> 
+  <arg name="use_detector" default="true" /> 
+  <arg name="gazebo_gui" default="false" /> 
 
 <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
     <arg name="recording" value="false"/>
     <arg name="debug" value="false"/>
     <arg name="verbose" value="true"/>
@@ -29,7 +31,7 @@
     </group>
 
 
-    <!-- Spawn a single_shelf in Gazebo -->
+    <!-- Spawn solamr_1 in Gazebo -->
     <group ns="solamr_1">
         <arg name="robot_name" value="solamr_1"/>
         <param name="tf_prefix" value="$(arg robot_name)" />  
@@ -73,6 +75,12 @@
     <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_1_teleop" unless="$(arg use_joy)">
         <param name="robot_ns" value="solamr_1" />
     </node>
+
+
+<!-- Obstacle Detector -->
+    <include file="$(find amr_gazebo)/launch/includes/obstacle_detector.xml" if="$(arg use_detector)">
+        <arg name="robot_ns" value="solamr_1"/>
+    </include>
 
 
 <!-- rviz -->

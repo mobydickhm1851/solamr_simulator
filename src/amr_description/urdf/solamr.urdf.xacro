@@ -89,7 +89,7 @@
       <geometry>
         <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
       </geometry>
-      <material name="light_black"/>
+      <material name="white"/>
     </visual>
 
     <collision>
@@ -273,7 +273,7 @@
         <mesh filename="package://amr_description/meshes/A2_top_extr10mm_H.stl" scale="0.01 0.01 0.01"/>
 -->
       </geometry>
-      <material name="light_black"/>
+      <material name="white"/>
     </visual>
 
     <collision>
