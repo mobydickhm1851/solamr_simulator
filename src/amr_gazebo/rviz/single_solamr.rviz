@@ -7,11 +7,9 @@ Panels:
         - /Global Options1
         - /Status1
         - /DepthCloud1/Auto Size1
-        - /Obstacles1
-        - /OrkObject1
         - /PointCloud21
       Splitter Ratio: 0.5
-    Tree Height: 767
+    Tree Height: 286
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -30,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: DepthCloud
+    SyncSource: PointCloud2
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -55,19 +53,87 @@ Visualization Manager:
       Reference Frame: <Fixed Frame>
       Value: true
     - Class: rviz/TF
-      Enabled: false
+      Enabled: true
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        fid77:
+          Value: true
+        solamr_1/A2_top:
+          Value: false
+        solamr_1/base_footprint:
+          Value: false
+        solamr_1/blocker:
+          Value: false
+        solamr_1/camera_depth_frame:
+          Value: false
+        solamr_1/camera_depth_optical_frame:
+          Value: false
+        solamr_1/camera_link:
+          Value: false
+        solamr_1/camera_rgb_frame:
+          Value: true
+        solamr_1/camera_rgb_optical_frame:
+          Value: false
+        solamr_1/chassis:
+          Value: false
+        solamr_1/left_back_caster:
+          Value: false
+        solamr_1/left_front_caster:
+          Value: false
+        solamr_1/odom:
+          Value: false
+        solamr_1/right_back_caster:
+          Value: false
+        solamr_1/right_front_caster:
+          Value: false
+        solamr_1/scan_front:
+          Value: false
+        solamr_1/scan_rear:
+          Value: false
+        solamr_1/wheel_left_link:
+          Value: false
+        solamr_1/wheel_right_link:
+          Value: false
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: true
       Tree:
-        {}
+        solamr_1/odom:
+          solamr_1/base_footprint:
+            solamr_1/chassis:
+              solamr_1/A2_top:
+                {}
+              solamr_1/blocker:
+                {}
+              solamr_1/camera_link:
+                solamr_1/camera_depth_frame:
+                  solamr_1/camera_depth_optical_frame:
+                    {}
+                solamr_1/camera_rgb_frame:
+                  solamr_1/camera_rgb_optical_frame:
+                    fid77:
+                      {}
+              solamr_1/left_back_caster:
+                {}
+              solamr_1/left_front_caster:
+                {}
+              solamr_1/right_back_caster:
+                {}
+              solamr_1/right_front_caster:
+                {}
+              solamr_1/scan_front:
+                {}
+              solamr_1/scan_rear:
+                {}
+              solamr_1/wheel_left_link:
+                {}
+              solamr_1/wheel_right_link:
+                {}
       Update Interval: 0
-      Value: false
+      Value: true
     - Class: rviz/MarkerArray
       Enabled: true
       Marker Topic: visualization_marker_array
@@ -233,7 +299,7 @@ Visualization Manager:
       Use rainbow: true
       Value: false
     - Class: rviz/Camera
-      Enabled: false
+      Enabled: true
       Image Rendering: background and overlay
       Image Topic: /solamr_1/camera/rgb/image_raw
       Name: Camera
@@ -241,14 +307,15 @@ Visualization Manager:
       Queue Size: 2
       Transport Hint: raw
       Unreliable: false
-      Value: false
+      Value: true
       Visibility:
-        "": true
         DepthCloud: true
         FrontLaserScan: true
         Grid: true
         MarkerArray: true
         Obstacles: true
+        OrkObject: true
+        PointCloud2: true
         RearLaserScan: true
         RobotModel: true
         TF: true
@@ -305,22 +372,12 @@ Visualization Manager:
       Value: false
     - Class: object_recognition_ros/OrkObject
       Confidence: true
-      Enabled: true
+      Enabled: false
       ID: false
       Name: OrkObject
-      Topic: ""
+      Topic: /recognized_object_array
       Unreliable: false
-      Value: true
-    - Bounding Box: false
-      Class: object_recognition_ros/OrkTable
-      Color: 0; 255; 255
-      Enabled: true
-      Hull: true
-      Name: OrkTable
-      Top: true
-      Topic: ""
-      Unreliable: false
-      Value: true
+      Value: false
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
@@ -376,7 +433,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 8.37976742
+      Distance: 4.45645046
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -391,20 +448,20 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.744796276
+      Pitch: 0.119796276
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 2.93859172
+      Yaw: 2.77359176
     Saved: ~
 Window Geometry:
   Camera:
-    collapsed: true
+    collapsed: false
   Displays:
     collapsed: false
   Height: 1056
   Hide Left Dock: false
   Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd0000000400000000000001790000038efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed0000043800000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007301000000280000038e000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c0000026100000001000002190000035bfc0200000004fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002e000001ce000000ad00fffffffb0000000c00430061006d0065007200610000000203000001860000001600fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000046fc0100000002fb0000000800540069006d00650100000000000007800000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000006010000038e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd0000000400000000000002770000038efc0200000009fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed0000043800000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000001ad000000d700fffffffb0000000c00430061006d00650072006101000001db000001db0000001600fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000021900000372fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000372000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000078000000046fc0100000002fb0000000800540069006d00650100000000000007800000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000005030000038e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -414,5 +471,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 1920
-  X: 919
-  Y: 24
+  X: 0
+  Y: 1104

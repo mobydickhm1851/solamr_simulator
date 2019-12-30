@@ -14,6 +14,15 @@
      </inertial> 
  </xacro:macro>
 
+<xacro:macro name="cuboid_inertia" params ="m w l h"> 
+    <inertial> 
+        <mass value="${m}"/> 
+        <inertia ixx="${m*(w*w+h*h)/12}" ixy="0.0" ixz="0.0" 
+                 iyy="${m*(l*l+h*h)/12}" iyz= "0.0" 
+                 izz="${m*(w*w+l*l)/12}"/> 
+     </inertial> 
+ </xacro:macro>
+
 <!-- #### body property #### -->
 <xacro:property name="body_length" value=".45"/>
 <xacro:property name="body_width" value=".45"/>
@@ -25,17 +34,17 @@
 <xacro:property name="leg_mass" value="1"/>
 
 <!-- #####  leg macro  ##### -->
-<xacro:macro name="leg" params= "prefix suffix X1 X2 Y1 Y2">
+<xacro:macro name="leg" params= "prefix suffix X1 Y1">
            
   <joint name="${prefix}_${suffix}_leg_joint" type="fixed">
     <parent link= "body"/>
     <child link= "${prefix}_${suffix}_leg"/>
-    <origin xyz= "${(body_length/2)*X1 + (body_length/2)*X2} ${(body_width/2)*Y1 + (body_width/2)*Y2}  ${leg_length/2}" rpy="0 0 0"/>
+    <origin xyz= "${(body_length/2)*X1} ${(body_width/2)*Y1}  ${leg_length/2}" rpy="0 0 0"/>
     <dynamics damping="0.0" friction="0.0"/>  
   </joint>
 
   <link name= "${prefix}_${suffix}_leg">
-    <!--
+    <!-- usefule to visualize when debugging
     <visual>
       <origin rpy= "0 0 0" xyz= "0 0 0"/>
       <geometry>   
@@ -43,7 +52,7 @@
       </geometry>
       <material name= "light_black"/>
     </visual>
--->`
+    -->
     <collision>
       <origin rpy= "0 0 0" xyz= "0 0 0"/>
       <geometry>
@@ -52,7 +61,6 @@
     </collision>
     <xacro:cylinder_inertia m="${leg_mass}" r="${leg_radius}" h="${leg_length}"/>
   </link>
-         
      
   <gazebo reference ="${prefix}_${suffix}_leg">
     <mu1 value=".005"/>
@@ -64,6 +72,46 @@
   </gazebo>
                  
 </xacro:macro>
+
+<!-- ####  Aruco property #### -->
+<xacro:property name="aruco_width" value="0.4"/>
+<xacro:property name="aruco_length" value="0.4"/>
+<xacro:property name="aruco_height" value="0.01"/>
+<xacro:property name="aruco_z" value="1."/>
+<xacro:property name="aruco_mass" value="1"/>
+
+<!-- #####  Aruco macro  ##### -->
+    <!-- Aruco facing -->
+<xacro:macro name="aruco" params= "prefix X1 Y1 Yaw">
+  <joint name="${prefix}_joint" type="fixed">
+    <parent link= "body"/>
+    <child link= "${prefix}_aruco"/>
+    <origin xyz= "${(body_length/2)*X1} ${(body_width/2)*Y1} ${aruco_z}" rpy="${PI/2} 0 ${Yaw*PI/2}"/>
+    <dynamics damping="0.0" friction="0.0"/>  
+  </joint>
+
+  <link name= "${prefix}_aruco">
+    <visual>
+      <origin rpy= "0 0 0" xyz= "0 0 0"/>
+      <geometry>   
+          <box size="${aruco_length} ${aruco_width} ${aruco_height}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy= "0 0 0" xyz= "0 0 0"/>
+      <geometry>
+          <box size="${aruco_length} ${aruco_width} ${aruco_height}"/>
+      </geometry>
+    </collision>
+    <xacro:cuboid_inertia m="${aruco_mass}" w="${aruco_width}" l="${aruco_length}" h="${aruco_height}"/>
+  </link>
+
+  <gazebo reference="${prefix}_aruco">
+      <material>aruco/0</material>
+  </gazebo>
+
+</xacro:macro>
+
 
   <!-- body-->
   <link name="body">
@@ -93,10 +141,10 @@
   </gazebo>
 
 <!-- #### 4 legs #### -->
-  <xacro:leg prefix="right" suffix="front" X1="0" X2="1" Y1="-1" Y2="0" />
-  <xacro:leg prefix="right" suffix="back" X1="-1" X2="0" Y1="-1" Y2="0"/>
-  <xacro:leg prefix="left" suffix="front" X1="0" X2="1" Y1="0" Y2="1"/>
-  <xacro:leg prefix="left" suffix="back" X1="-1" X2="0" Y1="0" Y2="1"/>
+  <xacro:leg prefix="right" suffix="front" X1="1" Y1="-1"/>
+  <xacro:leg prefix="right" suffix="back" X1="-1" Y1="-1"/>
+  <xacro:leg prefix="left" suffix="front" X1="1" Y1="1"/>
+  <xacro:leg prefix="left" suffix="back" X1="-1" Y1="1"/>
 
 
 <!-- #### B bottom #### -->
@@ -112,7 +160,7 @@
       <geometry>
         <!--
         <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
--->
+        -->
         <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="light_black"/>
@@ -124,7 +172,7 @@
       <geometry>
         <!--
         <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
--->
+        -->
         <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </collision>
@@ -137,6 +185,12 @@
                izz="2.25e-02" />
     </inertial>
   </link>
+
+  <!-- Aruco spawn -->
+  <xacro:aruco prefix="east" X1="0" Y1="-1" Yaw="0" />
+  <xacro:aruco prefix="west" X1="0" Y1="1" Yaw="0" />
+  <xacro:aruco prefix="north" X1="1" Y1="0" Yaw="1" />
+  <xacro:aruco prefix="south" X1="-1" Y1="0" Yaw="1" />
 
   <gazebo reference="B_bot">
       <mu1>0</mu1>

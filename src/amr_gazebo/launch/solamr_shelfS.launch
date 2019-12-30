@@ -77,10 +77,24 @@
     </node>
 
 
-<!-- Obstacle Detector -->
+<!-- Obstacle Detector 
     <include file="$(find amr_gazebo)/launch/includes/obstacle_detector.xml" if="$(arg use_detector)">
         <arg name="robot_ns" value="solamr_1"/>
     </include>
+    -->
+
+<!-- Object Recognition -->
+    <arg name="gui" default="true"/>
+    <arg name="image_topic" default="/solamr_1/camera/rgb/image_raw"/>
+    <arg name="session_path" default="$(find amr_gazebo)/config/od_2d_bCart_session.bin"/>
+    <arg name="settings_path" default="~/.ros/find_object_2d.ini"/>
+
+    <node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen">
+        <remap from="image" to="$(arg image_topic)"/>
+        <param name="gui" value="$(arg gui)" type="bool"/>
+        <param name="session_path" value="$(arg session_path)" type="str"/>
+        <param name="settings_path" value="$(arg settings_path)" type="str"/>
+    </node>
 
 
 <!-- rviz -->

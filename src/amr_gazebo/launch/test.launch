@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node pkg="amr_gazebo" name="pub" type="pub.py" output="screen">
+        <param name="argument" type="str" value="/chatter" />
+    </node>
+
+</launch>

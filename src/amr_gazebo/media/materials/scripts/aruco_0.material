@@ -1,0 +1,20 @@
+material aruco/0
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      lighting on
+      emissive 1.0 1.0 1.0 1.0
+
+      texture_unit
+      {
+        // Relative to the location of the material script
+        texture ../textures/aruco_0.png
+        // Repeat the texture over the surface (4 per face)
+        scale 1.0 1.0
+      }
+    }
+  }
+}
