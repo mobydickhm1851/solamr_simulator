@@ -112,12 +112,14 @@
         <remap from="depth_registered/image_raw" to="/solamr_1/camera/depth/image_raw"/>
         <remap from="depth_registered/camera_info" to="/solamr_1/camera/depth/camera_info"/>
     </node>
+
+
 <!-- Aruco detection -->
   <!-- namespace for camera input -->
   <arg name="camera" default="/solamr_1/camera/rgb"/>
   <arg name="image" default="image_raw"/>
   <arg name="transport" default="compressed"/>
-  <arg name="fiducial_len" default="0.36"/>
+  <arg name="fiducial_len" default="0.25"/>
   <arg name="dictionary" default="10"/>
   <arg name="do_pose_estimation" default="true"/>
   <arg name="ignore_fiducials" default="" />

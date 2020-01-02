@@ -2,12 +2,15 @@
 
 import rospy
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TransformStamped
+from fiducial_msgs.msg import FiducialTransform, FiducialTransformArray
+import tf2_ros
 from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Point
 from math import atan2, exp, sqrt, log
 from math import pi as PI
 import copy
+import numpy as np
 
 class AutoConnect:
     
@@ -17,13 +20,17 @@ class AutoConnect:
         self.PUB_RATE = 30
         self.MIN_OMEGA = 0.2
         self.MIN_VEL = 0.5
-        
         self.pose_now = Point()
         self.theta = 0.0
+        self.shelft_dict = dict()
 
         rospy.init_node("position_follower", anonymous=True)
-        self.robot_ns = rospy.get_param('/solamr_1_follower/robot_ns') 
+        self.robot_ns = rospy.get_param('/solamr_1_AC/robot_ns') 
+        '''tf listener and '''
+        self.tfBuffer = tf2_ros.Buffer()
+        listener = tf2_ros.TransformListener(self.tfBuffer)
 
+        self.fiducial_sub = rospy.Subscriber("/fiducial_transforms", FiducialTransformArray, self.aruco2Pose)
         self.odom_sub = rospy.Subscriber("/{0}/odom".format(self.robot_ns), Odometry, self.odomUpdate)
         self.twist_pub = rospy.Publisher("/{0}/cmd_vel".format(self.robot_ns), Twist, queue_size = 5)
 
@@ -45,8 +52,16 @@ class AutoConnect:
     
     def faceSameDir(self, goal):
         ''' Decide to drive forward or backward '''
-        if abs(self.angularDiff(goal)) < PI/2 or abs(self.angularDiff(goal)) > PI*3/2 : return True
-        else : return False
+        if abs(self.angularDiff(goal)) < PI/2 or abs(self.angularDiff(goal)) > PI*3/2 : return True # same dir, drive forward
+        else : return False # opposite dir, drive reverse
+
+    def checkSudoGoal(self, point, backward):
+        ''' check if oppisite direction sudo-goal is needed'''
+        goal = copy.deepcopy(point)
+        if not self.faceSameDir(goal) and backward:
+            goal.x = self.pose_now.x - (goal.x - self.pose_now.x)
+            goal.y = self.pose_now.y - (goal.y - self.pose_now.y)
+        return goal
 
     def angularDiff(self, goal):
         x_diff = goal.x - self.pose_now.x
@@ -56,12 +71,9 @@ class AutoConnect:
         
     def angularVel(self, point, CONST=None, backward=True):
         if CONST is None: CONST = self.MIN_OMEGA
-        goal = copy.deepcopy(point)
-        if not self.faceSameDir(goal) and backward:
-            goal.x = self.pose_now.x - (goal.x - self.pose_now.x)
-            goal.y = self.pose_now.y - (goal.y - self.pose_now.y)
-
+        goal = self.checkSudoGoal(point, backward)
         theta_diff = self.angularDiff(goal)
+        ''' turn CW or CCW '''
         if theta_diff > 0:
             if theta_diff > PI: 
                 return - CONST * exp(2*PI - theta_diff) 
@@ -74,11 +86,7 @@ class AutoConnect:
                 return - CONST * exp(- theta_diff)
 
     def checkOrientation(self, point, backward=True):
-        goal = copy.deepcopy(point)
-        if not self.faceSameDir(goal) and backward :
-            goal.x = self.pose_now.x - (goal.x - self.pose_now.x)
-            goal.y = self.pose_now.y - (goal.y - self.pose_now.y)
-
+        goal = self.checkSudoGoal(point, backward)
         if abs(self.angularDiff(goal)) <= self.THETA_TOL: return True
         else: 
             #print("angleDiff:{0}".format(self.angularDiff(goal)))
@@ -93,6 +101,40 @@ class AutoConnect:
         dist = self.euclideanDist(goal)
         if self.faceSameDir(goal) : return CONST * log(dist+1)
         elif not self.faceSameDir(goal) : return - CONST * log(dist+1)
+
+    def tf2pose(self, b_pose, b_th, l_x, l_y): 
+        ''' from transform to global pose:base_pose, base_theta, local x and y '''
+        g_pose = Point()
+        rot_mat = np.array([[np.cos(b_th), -np.sin(b_th)]
+                ,[np.sin(b_th), np.cos(b_th)]])
+        [g_pose.x, g_pose.y] = np.dot(rot_mat, [l_x, l_y])+[b_pose.x, b_pose.y]
+        return g_pose
+
+    def aruco2Pose(self, msg):
+        ''' listen to tf transform and add shelft id and pose into dic '''
+        r = rospy.Rate(self.PUB_RATE)
+        ''' subscrib all aruco found and save their pose '''
+        for m in msg.transforms:
+            id = m.fiducial_id
+            try:
+                ''' get the tf transform from aruco to base '''
+                tf2 = self.tfBuffer.lookup_transform(
+                        "{0}/base_footprint".format(self.robot_ns), 
+                        "fid{0}".format(id),
+                        rospy.Time())
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException): 
+                r.sleep()
+            trans = tf2.transform.translation
+            # rot = tf2.transform.rotation #only x, y is needed
+            id_pose = self.tf2pose(self.pose_now, self.theta, trans.x, trans.y)
+            self.shelft_dict[id] = id_pose
+            print("77 shelft {0}".format(self.shelft_dict[77]))
+            
+
+
+    def id2GoalPose(self, shelft_id):
+        ''' get shelft pose from id '''
+        pass
 
     def move2Goal(self, goal_x, goal_y, goal_theta):
 
@@ -116,7 +158,7 @@ class AutoConnect:
 
                 cmd_vel.linear.x = self.linearVel(sub_goal)
                 cmd_vel.angular.z = self.angularVel(sub_goal)      
-
+                ''' set to 0 when goal pose or orientation is reached '''
                 if self.checkOrientation(sub_goal) :
                     cmd_vel.angular.z = 0.0
                 if self.euclideanDist(sub_goal) <= self.POSE_TOL:
@@ -170,7 +212,9 @@ if __name__ == '__main__':
     
     try:
         solamr0 = AutoConnect()
-        solamr0.move2Goal(2.04,1.0,0)
+        while not rospy.is_shutdown():
+            rospy.spin()
+        #solamr0.move2Goal(2.04,1.0,0)
 
     except rospy.ROSInterruptException:
         pass

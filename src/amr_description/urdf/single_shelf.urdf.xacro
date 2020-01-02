@@ -74,14 +74,15 @@
 </xacro:macro>
 
 <!-- ####  Aruco property #### -->
-<xacro:property name="aruco_width" value="0.4"/>
-<xacro:property name="aruco_length" value="0.4"/>
+<xacro:property name="aruco_width" value="0.25"/>
+<xacro:property name="aruco_length" value="0.25"/>
 <xacro:property name="aruco_height" value="0.01"/>
 <xacro:property name="aruco_z" value="1."/>
 <xacro:property name="aruco_mass" value="1"/>
+<xacro:property name="edge_width" value="0.1"/>
 
 <!-- #####  Aruco macro  ##### -->
-    <!-- Aruco facing -->
+    <!-- Aruco facing four directions-->
 <xacro:macro name="aruco" params= "prefix X1 Y1 Yaw">
   <joint name="${prefix}_joint" type="fixed">
     <parent link= "body"/>
@@ -107,7 +108,34 @@
   </link>
 
   <gazebo reference="${prefix}_aruco">
-      <material>aruco/0</material>
+      <material>SOLab/aruco0</material>
+  </gazebo>
+
+    <!-- Back Board for white edges -->
+  <joint name="${prefix}_whiteboarder_joint" type="fixed">
+    <parent link= "body"/>
+    <child link= "${prefix}_aruco_whiteboarder"/>
+    <origin xyz= "${(body_length/2-aruco_height*1/3)*X1} ${(body_width/2-aruco_height*1/3)*Y1} ${aruco_z}" rpy="${PI/2} 0 ${Yaw*PI/2}"/>
+    <dynamics damping="0.0" friction="0.0"/>  
+  </joint>
+
+  <link name= "${prefix}_aruco_whiteboarder">
+    <visual>
+      <origin rpy= "0 0 0" xyz= "0 0 0"/>
+      <geometry>   
+          <box size="${aruco_length+edge_width} ${aruco_width+edge_width} ${aruco_height}"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy= "0 0 0" xyz= "0 0 0"/>
+      <geometry>
+          <box size="${aruco_length+edge_width} ${aruco_width+edge_width} ${aruco_height}"/>
+      </geometry>
+    </collision>
+    <xacro:cuboid_inertia m="${aruco_mass}" w="${aruco_width+edge_width}" l="${aruco_length+edge_width}" h="${aruco_height}"/>
+  </link>
+  <gazebo reference="${prefix}_aruco_whiteboarder">
+      <material>SOLab/WhiteGlow</material>
   </gazebo>
 
 </xacro:macro>
