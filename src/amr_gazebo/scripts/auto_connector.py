@@ -5,7 +5,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, TransformStamped
 from fiducial_msgs.msg import FiducialTransform, FiducialTransformArray
 import tf2_ros
-from tf.transformations import euler_from_quaternion
+import tf.transformations as t
 from geometry_msgs.msg import Point
 from math import atan2, exp, sqrt, log
 from math import pi as PI
@@ -34,13 +34,20 @@ class AutoConnect:
         self.odom_sub = rospy.Subscriber("/{0}/odom".format(self.robot_ns), Odometry, self.odomUpdate)
         self.twist_pub = rospy.Publisher("/{0}/cmd_vel".format(self.robot_ns), Twist, queue_size = 5)
 
+    def vectorRotateQuaternion(self, q, v):
+        '''return  qvq^-1.  q(x, y, z, w) '''
+        #t = tf.transformations 
+        qua_mul = t.quaternion_multiply
+        q_c = t.quaternion_conjugate(q)
+        return qua_mul( qua_mul(q, v), q_c )
+
     def odomUpdate(self, msg):
         ''' Update current pose ... '''
         self.pose_now.x = msg.pose.pose.position.x
         self.pose_now.y = msg.pose.pose.position.y
 
         rot_q = msg.pose.pose.orientation
-        (roll, pitch, self.theta) = euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])
+        (roll, pitch, self.theta) = t.euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])
 
     ''' Mod required : Need to idintify where to go in for connection'''
     def subGoal(self, goal_point):
@@ -125,10 +132,22 @@ class AutoConnect:
             except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException): 
                 r.sleep()
             trans = tf2.transform.translation
-            # rot = tf2.transform.rotation #only x, y is needed
+            rot = tf2.transform.rotation #only x, y is needed
+            (roll, pitch, id_theta) = t.euler_from_quaternion(
+                                    [rot.x, rot.y, rot.z, rot.w])
+            ''' get the pose of the aruco '''
             id_pose = self.tf2pose(self.pose_now, self.theta, trans.x, trans.y)
+            ''' get the orientation of z-axis of aruco (x, y, z, w)'''
+            z_vec = self.vectorRotateQuaternion([rot.x, rot.y, rot.z, rot.w], [0.0, 0.0, 1.0, 0.0])
+            print("id={0}, z_vec={1}".format(id,z_vec))
+            ''' project z_vec to x-y plane and get the angle in atan2 '''
+            id_theta = atan2(z_vec[0], z_vec[1])
+            print("id={1}, id_theta={0}".format(id_theta, id))
+            ''' get the center of the shelft (id to shelft center 0.45/2)'''
+            id_pose.x += - 0.45/2 * np.sin(id_theta) 
+            id_pose.y += 0.45/2 * np.cos(id_theta) 
             self.shelft_dict[id] = id_pose
-            print("77 shelft {0}".format(self.shelft_dict[77]))
+            print("{1} shelft {0}".format(self.shelft_dict[id], id))
             
 
 

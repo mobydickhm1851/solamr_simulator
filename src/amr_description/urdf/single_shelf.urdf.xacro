@@ -83,7 +83,7 @@
 
 <!-- #####  Aruco macro  ##### -->
     <!-- Aruco facing four directions-->
-<xacro:macro name="aruco" params= "prefix X1 Y1 Yaw">
+<xacro:macro name="aruco" params= "prefix X1 Y1 Yaw aruco_id">
   <joint name="${prefix}_joint" type="fixed">
     <parent link= "body"/>
     <child link= "${prefix}_aruco"/>
@@ -108,7 +108,7 @@
   </link>
 
   <gazebo reference="${prefix}_aruco">
-      <material>SOLab/aruco0</material>
+      <material>SOLab/aruco${aruco_id}</material>
   </gazebo>
 
     <!-- Back Board for white edges -->
@@ -215,10 +215,10 @@
   </link>
 
   <!-- Aruco spawn -->
-  <xacro:aruco prefix="east" X1="0" Y1="-1" Yaw="0" />
-  <xacro:aruco prefix="west" X1="0" Y1="1" Yaw="0" />
-  <xacro:aruco prefix="north" X1="1" Y1="0" Yaw="1" />
-  <xacro:aruco prefix="south" X1="-1" Y1="0" Yaw="1" />
+  <xacro:aruco prefix="east" X1="0" Y1="-1" Yaw="0" aruco_id="203"/>
+  <xacro:aruco prefix="west" X1="0" Y1="1" Yaw="0"  aruco_id="201"/>
+  <xacro:aruco prefix="north" X1="1" Y1="0" Yaw="1" aruco_id="200"/>
+  <xacro:aruco prefix="south" X1="-1" Y1="0" Yaw="1" aruco_id="202"/>
 
   <gazebo reference="B_bot">
       <mu1>0</mu1>
