@@ -11,6 +11,7 @@ from math import atan2, exp, sqrt, log
 from math import pi as PI
 import copy
 import numpy as np
+from std_msgs.msg import Float64MultiArray, MultiArrayDimension
 
 class AutoConnect:
     
@@ -33,6 +34,8 @@ class AutoConnect:
         self.fiducial_sub = rospy.Subscriber("/fiducial_transforms", FiducialTransformArray, self.aruco2Pose)
         self.odom_sub = rospy.Subscriber("/{0}/odom".format(self.robot_ns), Odometry, self.odomUpdate)
         self.twist_pub = rospy.Publisher("/{0}/cmd_vel".format(self.robot_ns), Twist, queue_size = 5)
+        self.shelft_pose_pub = rospy.Publisher("/shelft_pose", Float64MultiArray, queue_size = 5)
+
 
     def vectorRotateQuaternion(self, q, v):
         '''return  qvq^-1.  q(x, y, z, w) '''
@@ -119,6 +122,7 @@ class AutoConnect:
 
     def aruco2Pose(self, msg):
         ''' listen to tf transform and add shelft id and pose into dic '''
+
         r = rospy.Rate(self.PUB_RATE)
         ''' subscrib all aruco found and save their pose '''
         for m in msg.transforms:
@@ -139,15 +143,22 @@ class AutoConnect:
             id_pose = self.tf2pose(self.pose_now, self.theta, trans.x, trans.y)
             ''' get the orientation of z-axis of aruco (x, y, z, w)'''
             z_vec = self.vectorRotateQuaternion([rot.x, rot.y, rot.z, rot.w], [0.0, 0.0, 1.0, 0.0])
-            print("id={0}, z_vec={1}".format(id,z_vec))
             ''' project z_vec to x-y plane and get the angle in atan2 '''
             id_theta = atan2(z_vec[0], z_vec[1])
-            print("id={1}, id_theta={0}".format(id_theta, id))
             ''' get the center of the shelft (id to shelft center 0.45/2)'''
             id_pose.x += - 0.45/2 * np.sin(id_theta) 
             id_pose.y += 0.45/2 * np.cos(id_theta) 
             self.shelft_dict[id] = id_pose
-            print("{1} shelft {0}".format(self.shelft_dict[id], id))
+            #print("{1} shelft {0}".format(self.shelft_dict[id], id))
+            '''car and estimated shelft pose in [car_x, car_y, est_x, est_y] '''
+            msg = Float64MultiArray()
+            msg.layout.dim.append(MultiArrayDimension())
+            msg.layout.dim[0].label='id number:{0}'.format(id)
+            msg.layout.dim[0].size= 1*4
+            msg.data = [self.pose_now.x, self.pose_now.y, id_pose.x, id_pose.y]
+            self.shelft_pose_pub.publish(msg)
+            r1 = rospy.Rate(10)
+            r1.sleep()
             
 
 
