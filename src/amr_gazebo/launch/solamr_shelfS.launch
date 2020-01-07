@@ -4,7 +4,7 @@
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
   <arg name="use_rviz" default="true" /> 
-  <arg name="use_joy" default="false" /> 
+  <arg name="use_joy" default="true" /> 
   <arg name="use_lidar_detect" default="true" /> 
   <arg name="use_aruco_detect" default="true" /> 
   <arg name="use_find_object" default="false" /> 
@@ -57,7 +57,7 @@
     <arg name="single" default="true"/>
     -->
 
-    <arg name="joy_maxVel" value="1." />
+    <arg name="joy_maxVel" value=".5" />
     <arg name="joy_accele" value=".01"/>
 
     <!-- solamr_1 -->

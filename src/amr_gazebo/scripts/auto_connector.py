@@ -45,7 +45,7 @@ class AutoConnect:
         return qua_mul( qua_mul(q, v), q_c )
 
     def odomUpdate(self, msg):
-        ''' Update current pose ... '''
+        ''' Update current car pose ... '''
         self.pose_now.x = msg.pose.pose.position.x
         self.pose_now.y = msg.pose.pose.position.y
 
@@ -157,7 +157,7 @@ class AutoConnect:
             msg.layout.dim[0].size= 1*4
             msg.data = [self.pose_now.x, self.pose_now.y, id_pose.x, id_pose.y]
             self.shelft_pose_pub.publish(msg)
-            r1 = rospy.Rate(10)
+            r1 = rospy.Rate(1)
             r1.sleep()
             
 
