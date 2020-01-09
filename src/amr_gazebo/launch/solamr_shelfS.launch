@@ -3,12 +3,12 @@
 <launch>
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
-  <arg name="use_rviz" default="true" /> 
+  <arg name="use_rviz" default="false" /> 
   <arg name="use_joy" default="true" /> 
   <arg name="use_lidar_detect" default="true" /> 
   <arg name="use_aruco_detect" default="true" /> 
   <arg name="use_find_object" default="false" /> 
-  <arg name="gazebo_gui" default="false" /> 
+  <arg name="gazebo_gui" default="true" /> 
 
 <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -41,7 +41,7 @@
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x -10 -y 1 -z 0 -param robot_description" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x -2 -y 1 -z 0 -param robot_description" />
     <!-- control file: controller spawner, robot_state_publisher -->
     <include file="$(find amr_control)/launch/amr_control.launch">
         <arg name="robot_ns" value="$(arg robot_name)" />
@@ -103,10 +103,10 @@
   <!-- broadcast tf of arucos -->
     <node pkg="amr_gazebo" type="aruco_publisher.py" name="aruco_tf2_broadcast" if="$(arg use_aruco_detect)"/>
 
-<!-- Auto-Connector node -->
+<!-- Auto-Connector node 
     <node pkg="amr_gazebo" type="auto_connector.py" name="solamr_1_AC" output="screen">
         <param name="robot_ns" value="solamr_1"/>
-    </node>
+    </node>-->
 
 <!-- rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/single_solamr.rviz" if="$(arg use_rviz)" />

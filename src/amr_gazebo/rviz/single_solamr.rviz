@@ -28,7 +28,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: Camera
 Toolbars:
   toolButtonStyle: 2
 Visualization Manager:
@@ -57,6 +57,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
+        fid202:
+          Value: true
         solamr_1/A2_top:
           Value: false
         solamr_1/base_footprint:
@@ -111,7 +113,8 @@ Visualization Manager:
                   {}
               solamr_1/camera_rgb_frame:
                 solamr_1/camera_rgb_optical_frame:
-                  {}
+                  fid202:
+                    {}
             solamr_1/left_back_caster:
               {}
             solamr_1/left_front_caster:

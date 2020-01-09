@@ -39,7 +39,7 @@ class LidarDetect:
         self.theta = 0.0
         self.scan_xy = np.zeros((0,2))
         self.obj_dict = dict()
-        self.range_max = 4.1
+        self.range_max = 2.5 #4.1
         self.map_size = 10
         self.shelft_l = .45
         self.shelft_w = .45
@@ -90,7 +90,7 @@ class LidarDetect:
         ang_min = scan.angle_min
         ang_max = scan.angle_max
         ang_incr = scan.angle_increment
-        self.range_max = scan.range_max # too_late for boundaries
+        #self.range_max = scan.range_max # too_late for boundaries
         ''' refresh the lidar pose'''
         self.scan_xy = np.zeros((0,2))
         [rel_th, rel_x, rel_y] = self.getRealPose(lidar_frame)
@@ -130,20 +130,20 @@ class LidarDetect:
         x, y = 0, 0
         self.ax0.clear()
         self.ax1.clear()
-        self.scat_xy_0 = self.ax0.scatter(x, y, s=20, vmin=0, vmax=1,
+        self.scat_xy_0 = self.ax0.scatter(x, y, s=10, vmin=0, vmax=1,
                                         c='None', edgecolor="r", label="scan")
-        self.scat_xy_1 = self.ax1.scatter(x, y, s=20, vmin=0, vmax=1,
+        self.scat_xy_1 = self.ax1.scatter(x, y, s=10, vmin=0, vmax=1,
                                         c='None', edgecolor="r", label="scan")
-        self.scat_obj_0 = self.ax0.scatter(x, y, s=30, vmin=0, vmax=1,
+        self.scat_obj_0 = self.ax0.scatter(x, y, s=1, vmin=0, vmax=1,
                                         c='b', marker="+", label="object")
-        self.scat_obj_1 = self.ax1.scatter(x, y, s=30, vmin=0, vmax=1,
+        self.scat_obj_1 = self.ax1.scatter(x, y, s=1, vmin=0, vmax=1,
                                         c='b', marker="+", label="object")
         self.ax0.axis([-self.map_size, self.map_size,
                         -self.map_size, self.map_size])
-        self.ax1.axis([-self.range_max + self.pose_now[0][0]+0.5,
-                        self.range_max + self.pose_now[0][0]+0.5,
-                        -self.range_max + self.pose_now[0][1]+0.5,
-                        self.range_max + self.pose_now[0][1]+0.5])
+        self.ax1.axis([-self.range_max + self.pose_now[0][0],
+                        self.range_max + self.pose_now[0][0],
+                        -self.range_max + self.pose_now[0][1],
+                        self.range_max + self.pose_now[0][1]])
         self.ax0.set_title("Lidar Plot [Global Frame]", fontsize=18)
         self.ax1.set_title("Lidar Plot [Local Frame]", fontsize=18)
         self.ax0.legend(scatterpoints = 1, loc='upper left')
@@ -168,10 +168,11 @@ class LidarDetect:
             self.scat_obj_0.set_offsets(self.obj_dict['202'])
             self.scat_obj_1.set_offsets(self.obj_dict['202'])
 
-        self.ax1.set_xlim(-self.range_max + self.pose_now[0][0]-0.5,
-                        self.range_max + self.pose_now[0][0]+0.5)
-        self.ax1.set_ylim(-self.range_max + self.pose_now[0][1]-0.5,
-                        self.range_max + self.pose_now[0][1]+0.5)
+        self.range_max = 1.0
+        self.ax1.set_xlim(-self.range_max + self.pose_now[0][0]+1,
+                        self.range_max + self.pose_now[0][0]+1)
+        self.ax1.set_ylim(-self.range_max + self.pose_now[0][1],
+                        self.range_max + self.pose_now[0][1])
 	# Create a Rectangle patch
 	self.rect0.set_xy(self.pose_now[0])
 	self.rect1.set_xy(self.pose_now[0])

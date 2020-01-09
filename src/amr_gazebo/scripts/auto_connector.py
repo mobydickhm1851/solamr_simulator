@@ -53,11 +53,11 @@ class AutoConnect:
         (roll, pitch, self.theta) = t.euler_from_quaternion([rot_q.x, rot_q.y, rot_q.z, rot_q.w])
 
     ''' Mod required : Need to idintify where to go in for connection'''
-    def subGoal(self, goal_point):
+    def subGoal(self, goal_point, dist=1.0):
         ''' The rest point before going straight to connect ... '''
         point = copy.deepcopy(goal_point)
-        if point.x > self.pose_now.x : point.x -= 1
-        elif point.x < self.pose_now.x : point.x += 1
+        if point.x > self.pose_now.x : point.x -= dist
+        elif point.x < self.pose_now.x : point.x += dist
         return point
     
     def faceSameDir(self, goal):
@@ -166,29 +166,50 @@ class AutoConnect:
         ''' get shelft pose from id '''
         pass
 
-    def move2Goal(self, goal_x, goal_y, goal_theta):
+    def move2Goal(self, id_num):
 
         r = rospy.Rate(self.PUB_RATE)
 
-        cmd_vel = Twist()
-        goal = Point()
-        theta = 0.0
-
         # Target Point
-        goal.x = goal_x
-        goal.y = goal_y
-        theta = goal_theta
+        goal = self.shelft_dict[id_num] 
+        theta = 0.0
+        cmd_vel = Twist()
 
-        sub_goal = self.subGoal(goal)
-        rospy.loginfo("Moving to : {0}".format(sub_goal))
 
         while not rospy.is_shutdown():
-            # 1. Go to sub goal to align with the connector on B cart. 
+            ''' 0. Moving closer (2m) for more accurate pose estimation'''
+            sub_goal = self.subGoal(goal,2)
+            rospy.loginfo("Moving to {0} for more accurate pose".format(sub_goal))
             while not self.checkOrientation(sub_goal) or self.euclideanDist(sub_goal) > self.POSE_TOL :
 
                 cmd_vel.linear.x = self.linearVel(sub_goal)
                 cmd_vel.angular.z = self.angularVel(sub_goal)      
-                ''' set to 0 when goal pose or orientation is reached '''
+                # set to 0 when goal pose or orientation is reached 
+                if self.checkOrientation(sub_goal) :
+                    cmd_vel.angular.z = 0.0
+                if self.euclideanDist(sub_goal) <= self.POSE_TOL:
+                    cmd_vel.linear.x = 0.0
+
+                self.twist_pub.publish(cmd_vel)
+                r.sleep()
+    
+            cmd_vel.linear.x = 0.0      
+            cmd_vel.angular.z = 0.0      
+            self.twist_pub.publish(cmd_vel)
+            rospy.loginfo("Estimating Shelft Pose!")
+
+            # update the shelft pose before connection 
+            goal = self.shelft_dict[id_num] 
+            rospy.loginfo("Now shelft {0} at: {1}".format(id_num, goal))
+            sub_goal = self.subGoal(goal)
+            rospy.loginfo("Moving to : {0}".format(sub_goal))
+
+            ''' 1. Go to sub goal to align with the connector on B cart.''' 
+            while not self.checkOrientation(sub_goal) or self.euclideanDist(sub_goal) > self.POSE_TOL :
+
+                cmd_vel.linear.x = self.linearVel(sub_goal)
+                cmd_vel.angular.z = self.angularVel(sub_goal)      
+                # set to 0 when goal pose or orientation is reached 
                 if self.checkOrientation(sub_goal) :
                     cmd_vel.angular.z = 0.0
                 if self.euclideanDist(sub_goal) <= self.POSE_TOL:
@@ -205,9 +226,10 @@ class AutoConnect:
             cmd_vel.angular.z = 0.0      
             self.twist_pub.publish(cmd_vel)
             rospy.loginfo("Goal Reached!")
+
             rospy.loginfo("Turning for connection...")
             
-            # 2. Turn to face +x toward B cart. 
+            ''' 2. Turn to face +x toward B cart. '''
             while not self.checkOrientation(goal, backward=False) :
 
                 cmd_vel.angular.z = self.angularVel(goal, backward=False)   
@@ -222,7 +244,7 @@ class AutoConnect:
 
             rospy.loginfo("Connecting...")
 
-            # 3. Connecting 
+            ''' 3. Connecting '''
             while self.euclideanDist(goal) > self.POSE_TOL :
 
                 cmd_vel.linear.x = self.linearVel(goal, self.MIN_VEL/2.5)
@@ -236,15 +258,40 @@ class AutoConnect:
             self.twist_pub.publish(cmd_vel)
             rospy.loginfo("Connected !")
             rospy.signal_shutdown("Connected!")
+            break
 
 
 if __name__ == '__main__':
-    
+    from pynput import keyboard
+    COMBINATIONS = [
+        {keyboard.Key.shift, keyboard.KeyCode(char='g')},
+        {keyboard.Key.shift, keyboard.KeyCode(char='G')}
+    ]
+    current = set()
+
+    def execute():
+        print(solamr0.shelft_dict)
+        input_num = 202
+        #goal = solamr0.shelft_dict[202]
+        #solamr0.move2Goal(goal.x, goal.y, 0)
+        solamr0.move2Goal(input_num)
+
+    def on_press(key):
+        if any([key in COMBO for COMBO in COMBINATIONS]):
+            current.add(key)
+            if any(all(k in current for k in COMBO) for COMBO in COMBINATIONS):
+                execute()
+
+    def on_release(key):
+        if any([key in COMBO for COMBO in COMBINATIONS]):
+            current.remove(key)
+
+    solamr0 = AutoConnect()
     try:
-        solamr0 = AutoConnect()
-        while not rospy.is_shutdown():
-            rospy.spin()
-        #solamr0.move2Goal(2.04,1.0,0)
+        with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+            while not rospy.is_shutdown():
+                listener.join()
+        #rospy.spin()
 
     except rospy.ROSInterruptException:
         pass
