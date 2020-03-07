@@ -5,7 +5,7 @@
 
   <arg name="use_rviz" default="false" /> 
   <arg name="use_joy" default="true" /> 
-  <arg name="use_lidar_detect" default="true" /> 
+  <arg name="use_lidar_detect" default="false" /> 
   <arg name="use_aruco_detect" default="true" /> 
   <arg name="use_find_object" default="false" /> 
   <arg name="gazebo_gui" default="true" /> 
@@ -18,17 +18,21 @@
     <arg name="gui" value="$(arg gazebo_gui)"/>
     <arg name="recording" value="false"/>
     <arg name="debug" value="false"/>
-    <arg name="verbose" value="true"/>
+    <arg name="verbose" value="false"/>
   </include>
 
 <!-- Spawn robots into Gazebo -->
+<arg name="shelft_type" value="shelft_S"/>
+<!--
+<arg name="shelft_type" value="shelft_XL"/>
+-->
 
 <!-- Spawn a single_shelf in Gazebo -->
-<group ns="shelf_S">
-    <arg name="robot_name" value="shelf_S"/>
+<group ns="$(arg shelft_type)">
+    <arg name="robot_name" value="$(arg shelft_type)"/>
     <param name="tf_prefix" value="$(arg robot_name)" />  
     <!-- interpret xacro into urdf-->
-    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/single_shelf.urdf.xacro robotName:=$(arg robot_name)" />
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/$(arg shelft_type).urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -param robot_description" />
 </group>
