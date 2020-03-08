@@ -49,6 +49,8 @@ w/x : increase/decrease only linear speed by 10%
 e/c : increase/decrease only angular speed by 10%
 space key, k : force stop
 anything else : stop smoothly
+Block for connection : t/b for CW/CCW
+Switch between solamr 1 and 2 : tab
 CTRL-C to quit
 """
 obstacle = {'a', 's', 'd', 'f'}
@@ -73,6 +75,7 @@ speedBindings={
         'c':(1,.9),
           }
 
+currentBot = 1
 
 def getKey():
     tty.setraw(sys.stdin.fileno())
@@ -137,12 +140,17 @@ def lockAction(key_pressed):
         return locker_ang
 
 
+def switch_bot(key_pressed):
+    global current_bot 
+
+
 if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
     
-    robot_ns = rospy.get_param('/solamr_1_teleop/robot_ns') 
-    rospy.init_node('{0}_teleop'.format(robot_ns), anonymous=True)
-    vel_pub = rospy.Publisher('/{0}/cmd_vel'.format(robot_ns), Twist, queue_size=5)
+    #rospy.init_node('solamr_teleop'.format(robot_ns), anonymous=True)
+    robot_ns = "solamr_1"
+    vel_pub_1 = rospy.Publisher('/{0}/cmd_vel'.format(robot_ns), Twist, queue_size=5)
+    vel_pub_2 = rospy.Publisher('/solamr_2/cmd_vel', Twist, queue_size=5)
     blocker_pub = rospy.Publisher('/{0}/blocker_position_controller/command'.format(robot_ns), Float64, queue_size=5)
     locker_sub = rospy.Subscriber("/{0}/blocker_position_controller/state".format(robot_ns), JointControllerState, lockerAngleUpdate )
 
@@ -208,7 +216,7 @@ if __name__=="__main__":
             twist = Twist()
             twist.linear.x = control_speed; twist.linear.y = 0; twist.linear.z = 0
             twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = control_turn
-            vel_pub.publish(twist)
+            vel_pub_1.publish(twist)
 
             #print("loop: {0}".format(count))
             #print("target: vx: {0}, wz: {1}".format(target_speed, target_turn))
@@ -226,6 +234,6 @@ if __name__=="__main__":
         twist = Twist()
         twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
-        vel_pub.publish(twist)
+        vel_pub_1.publish(twist)
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

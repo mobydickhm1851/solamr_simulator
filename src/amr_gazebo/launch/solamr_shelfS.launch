@@ -4,7 +4,7 @@
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
   <arg name="use_rviz" default="false" /> 
-  <arg name="use_joy" default="true" /> 
+  <arg name="use_joy" default="false" /> 
   <arg name="use_lidar_detect" default="false" /> 
   <arg name="use_aruco_detect" default="true" /> 
   <arg name="use_find_object" default="false" /> 
@@ -22,9 +22,9 @@
   </include>
 
 <!-- Spawn robots into Gazebo -->
-<arg name="shelft_type" value="shelft_S"/>
-<!--
 <arg name="shelft_type" value="shelft_XL"/>
+<!--
+<arg name="shelft_type" value="shelft_S"/>
 -->
 
 <!-- Spawn a single_shelf in Gazebo -->
@@ -34,7 +34,7 @@
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/$(arg shelft_type).urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -param robot_description" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 0 -y 1 -z 0 -param robot_description" />
 </group>
 
 
@@ -52,36 +52,22 @@
     </include>
 </group>
 
+<!-- Spawn solamr_2 in Gazebo -->
+<group ns="solamr_2">
+    <arg name="robot_name" value="solamr_2"/>
+    <param name="tf_prefix" value="$(arg robot_name)" />  
+    <!-- interpret xacro into urdf-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
+    <!-- spawn model from parameter server : robot_description -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -Y 3.14 -param robot_description" />
+    <!-- control file: controller spawner, robot_state_publisher -->
+    <include file="$(find amr_control)/launch/amr_control.launch">
+        <arg name="robot_ns" value="$(arg robot_name)" />
+    </include>
+</group>
 <?ignore
 ?>
 
-
-<!-- joy teleop -->
-    <!--
-    <arg name="single" default="true"/>
-    -->
-
-    <arg name="joy_maxVel" value=".5" />
-    <arg name="joy_accele" value=".01"/>
-
-    <!-- solamr_1 -->
-    <node pkg="amr_gazebo" type="teleop_joy.py" name="solamr_1_teleop" output="screen" if="$(arg use_joy)">
-        <param name="robot_ns" value="solamr_1" />
-        <param name="max_velocity" value="$(arg joy_maxVel)" />
-        <param name="acceleration" value="$(arg joy_accele)" />
-    </node>
-
-    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" if="$(arg use_joy)">
-        <param name="dev" type="string" value="/dev/input/js0" />
-        <remap from="/joy" to="/solamr_1/joy" />
-	    <param name="deadzone" value="0.0" />
-	    <param name="autorepeat_rate" value="130" />
-    </node>
-
-<!-- keyboard teleop -->
-    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_1_teleop" unless="$(arg use_joy)">
-        <param name="robot_ns" value="solamr_1" />
-    </node>
 
 
 <!-- Laser Obstacle Detector --> 
@@ -127,6 +113,35 @@
         <param name="gui" value="$(arg gui)" type="bool"/>
         <param name="session_path" value="$(arg session_path)" type="str"/>
         <param name="settings_path" value="$(arg settings_path)" type="str"/>
+    </node>
+
+<!-- joy teleop -->
+    <!--
+    <arg name="single" default="true"/>
+    -->
+
+    <arg name="joy_maxVel" value=".5" />
+    <arg name="joy_accele" value=".01"/>
+
+    <!-- solamr_1 -->
+    <node pkg="amr_gazebo" type="teleop_joy.py" name="solamr_1_teleop" output="screen" if="$(arg use_joy)">
+        <param name="robot_ns" value="solamr_1" />
+        <param name="max_velocity" value="$(arg joy_maxVel)" />
+        <param name="acceleration" value="$(arg joy_accele)" />
+    </node>
+
+    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" if="$(arg use_joy)">
+        <param name="dev" type="string" value="/dev/input/js0" />
+        <remap from="/joy" to="/solamr_1/joy" />
+	    <param name="deadzone" value="0.0" />
+	    <param name="autorepeat_rate" value="130" />
+    </node>
+
+<!-- keyboard teleop -->
+    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_1_teleop" output="screen" unless="$(arg use_joy)">
+        <!--
+        <param name="robot_ns" value="solamr_1" />
+-->
     </node>
 
 </launch>

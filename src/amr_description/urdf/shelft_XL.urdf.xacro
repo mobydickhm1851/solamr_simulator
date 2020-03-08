@@ -5,6 +5,29 @@
 <xacro:property name="deg_to_rad" value="0.017453"/>
 <xacro:property name="PI" value="3.14"/>
 
+<!-- #### body property #### -->
+<xacro:property name="body_length" value="1.2"/>
+<xacro:property name="body_width" value=".45"/>
+<xacro:property name="body_height" value=".45"/>
+
+<!-- ####  leg property #### -->
+<xacro:property name="leg_radius" value="0.025"/>
+<xacro:property name="leg_length" value="0.32"/>
+<xacro:property name="leg_mass" value="1"/>
+
+<!-- ####  Aruco property #### -->
+<xacro:property name="aruco_width" value="0.25"/>
+<xacro:property name="aruco_length" value="0.25"/>
+<xacro:property name="aruco_height" value="0.01"/>
+<xacro:property name="aruco_z" value="1."/>
+<xacro:property name="aruco_mass" value="1"/>
+<xacro:property name="edge_width" value="0.1"/>
+
+
+<!-- ######################################### -->
+<!-- begin           MACRO               begin -->
+<!-- ######################################### -->
+
 <xacro:macro name="cylinder_inertia" params ="m r h"> 
     <inertial> 
         <mass value="${m}"/> 
@@ -22,16 +45,6 @@
                  izz="${m*(w*w+l*l)/12}"/> 
      </inertial> 
  </xacro:macro>
-
-<!-- #### body property #### -->
-<xacro:property name="body_length" value=".45"/>
-<xacro:property name="body_width" value=".45"/>
-<xacro:property name="body_height" value=".45"/>
-
-<!-- ####  leg property #### -->
-<xacro:property name="leg_radius" value="0.025"/>
-<xacro:property name="leg_length" value="0.32"/>
-<xacro:property name="leg_mass" value="1"/>
 
 <!-- #####  leg macro  ##### -->
 <xacro:macro name="leg" params= "prefix suffix X1 Y1">
@@ -52,7 +65,8 @@
       </geometry>
       <material name= "light_black"/>
     </visual>
-    -->
+-->
+    
     <collision>
       <origin rpy= "0 0 0" xyz= "0 0 0"/>
       <geometry>
@@ -72,14 +86,6 @@
   </gazebo>
                  
 </xacro:macro>
-
-<!-- ####  Aruco property #### -->
-<xacro:property name="aruco_width" value="0.25"/>
-<xacro:property name="aruco_length" value="0.25"/>
-<xacro:property name="aruco_height" value="0.01"/>
-<xacro:property name="aruco_z" value="1."/>
-<xacro:property name="aruco_mass" value="1"/>
-<xacro:property name="edge_width" value="0.1"/>
 
 <!-- #####  Aruco macro  ##### -->
     <!-- Aruco facing four directions-->
@@ -105,6 +111,7 @@
       </geometry>
     </collision>
     <xacro:cuboid_inertia m="${aruco_mass}" w="${aruco_width}" l="${aruco_length}" h="${aruco_height}"/>
+
   </link>
 
   <gazebo reference="${prefix}_aruco">
@@ -141,12 +148,17 @@
 </xacro:macro>
 
 
+<!-- ##################################### -->
+<!-- end           MACRO               end -->
+<!-- ##################################### -->
+
+
   <!-- body-->
   <link name="body">
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://amr_description/meshes/only_shelf.stl" scale="0.01 0.01 0.01"/>
+          <mesh filename="package://amr_description/meshes/shelft/only_shelft_XL.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </visual>
 
@@ -175,21 +187,18 @@
   <xacro:leg prefix="left" suffix="back" X1="-1" Y1="1"/>
 
 
-<!-- #### B bottom #### -->
-  <joint name="B_bot_joint" type="fixed">
+<!-- #### B bottom 1 #### -->
+  <joint name="B_bot_1_joint" type="fixed">
     <parent link="body"/>
-    <child link="B_bot" />
-    <origin xyz="0 0 ${leg_length} " rpy="0 0 0"/>
+    <child link="B_bot_1" />
+    <origin xyz="${body_length/2 - 0.22} 0 ${leg_length} " rpy="0 0 0"/>
   </joint>
 
-  <link name="B_bot">
+  <link name="B_bot_1">
     <visual>
       <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
       <geometry>
-        <!--
-        <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
-        -->
-        <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
+        <mesh filename="package://amr_description/meshes/shelft/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
       <material name="light_black"/>
     </visual>
@@ -198,10 +207,40 @@
       <max_contacts>1</max_contacts>
       <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
       <geometry>
-        <!--
-        <mesh filename="package://amr_description/meshes/B_bot.stl" scale="0.01 0.01 0.01"/>
-        -->
-        <mesh filename="package://amr_description/meshes/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
+        <mesh filename="package://amr_description/meshes/shelft/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+    </collision>
+    
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.5"/>
+      <inertia ixx="2.15625e-02" ixy="0" ixz="0"
+               iyy="2.15625e-02" iyz="0"
+               izz="2.25e-02" />
+    </inertial>
+  </link>
+
+<!-- #### B bottom 2 #### -->
+  <joint name="B_bot_2_joint" type="fixed">
+    <parent link="body"/>
+    <child link="B_bot_2" />
+    <origin xyz="${-body_length/2 + 0.22} 0 ${leg_length} " rpy="0 0 0"/>
+  </joint>
+
+  <link name="B_bot_2">
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
+      <geometry>
+        <mesh filename="package://amr_description/meshes/shelft/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+      <material name="light_black"/>
+    </visual>
+
+    <collision>
+      <max_contacts>1</max_contacts>
+      <origin xyz="0.0 0 0.0" rpy="${PI} 0 ${PI/2}"/>
+      <geometry>
+        <mesh filename="package://amr_description/meshes/shelft/B_bot_shrink10mm.stl" scale="0.01 0.01 0.01"/>
       </geometry>
     </collision>
     
