@@ -138,7 +138,7 @@
     </node>
 
 <!-- keyboard teleop -->
-    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_1_teleop" output="screen" unless="$(arg use_joy)">
+    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_teleop" output="screen" unless="$(arg use_joy)">
         <!--
         <param name="robot_ns" value="solamr_1" />
 -->

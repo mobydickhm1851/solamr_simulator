@@ -310,7 +310,7 @@
   <joint name="blocker_joint" type="continuous">
     <parent link="chassis"/>
     <child link="blocker"/>
-    <origin xyz="0.083 0 .18" rpy="0 1.57 0"/>
+    <origin xyz="0.077 0 .2" rpy="0 1.57 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -319,21 +319,18 @@
       <!--
       <origin xyz=".02 0 -0.0095" rpy="0 0 0"/>
 -->
-      <origin xyz=".02 0 -0.002" rpy="0 0 0"/>
+      <origin xyz=".015 0 -0.002" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://amr_description/meshes/solamr/blocker.stl" scale="0.0095 0.0095 0.0095"/>
+        <mesh filename="package://amr_description/meshes/solamr/blocker.stl" scale="0.009 0.009 0.009"/>
       </geometry>
       <material name="orange"/>
     </visual>
 
     <collision>
-      <!--
-      <origin xyz=".02 0 -0.0095" rpy="0 0 0"/>
--->
       <max_contacts>1</max_contacts>
       <origin xyz=".02 0 -0.00" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://amr_description/meshes/solamr/blocker.stl" scale="0.0095 0.0095 0.0095"/>
+        <mesh filename="package://amr_description/meshes/solamr/blocker.stl" scale="0.009 0.009 0.009"/>
       </geometry>
     </collision>
 
