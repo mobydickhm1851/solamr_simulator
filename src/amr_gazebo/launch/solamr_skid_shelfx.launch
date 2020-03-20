@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+
+<launch>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
+
+  <arg name="use_rviz" default="false" /> 
+  <arg name="use_joy" default="false" /> 
+  <arg name="use_lidar_detect" default="false" /> 
+  <arg name="use_aruco_detect" default="true" /> 
+  <arg name="use_find_object" default="false" /> 
+  <arg name="gazebo_gui" default="true" /> 
+
+<!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="$(arg gazebo_gui)"/>
+    <arg name="recording" value="false"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="false"/>
+  </include>
+
+<!-- Spawn robots into Gazebo -->
+<arg name="shelft_type" value="shelft_XL"/>
+<!--
+<arg name="shelft_type" value="shelft_S"/>
+-->
+
+<!-- Spawn a single_shelf in Gazebo -->
+<group ns="$(arg shelft_type)">
+    <arg name="robot_name" value="$(arg shelft_type)"/>
+    <param name="tf_prefix" value="$(arg robot_name)" />  
+    <!-- interpret xacro into urdf-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/$(arg shelft_type).urdf.xacro robotName:=$(arg robot_name)" />
+    <!-- spawn model from parameter server : robot_description -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 0 -y 1 -z 0 -param robot_description" />
+</group>
+
+
+<!-- Spawn solamr_1 in Gazebo -->
+<group ns="solamr_1">
+    <arg name="robot_name" value="solamr_1"/>
+    <param name="tf_prefix" value="$(arg robot_name)" />  
+    <!-- interpret xacro into urdf-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
+    <!-- spawn model from parameter server : robot_description -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x -2 -y 1 -z 0 -param robot_description" />
+    <!-- control file: controller spawner, robot_state_publisher -->
+    <include file="$(find amr_control)/launch/amr_control.launch">
+        <arg name="robot_ns" value="$(arg robot_name)" />
+    </include>
+</group>
+
+<!-- Spawn solamr_2 in Gazebo -->
+<group ns="solamr_2">
+    <arg name="robot_name" value="solamr_2"/>
+    <param name="tf_prefix" value="$(arg robot_name)" />  
+    <!-- interpret xacro into urdf-->
+    <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
+    <!-- spawn model from parameter server : robot_description -->
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 2 -y 1 -z 0 -Y 3.14 -param robot_description" />
+    <!-- control file: controller spawner, robot_state_publisher -->
+    <include file="$(find amr_control)/launch/amr_control.launch">
+        <arg name="robot_ns" value="$(arg robot_name)" />
+    </include>
+</group>
+<?ignore
+?>
+
+
+
+<!-- Laser Obstacle Detector --> 
+    <include file="$(find amr_gazebo)/launch/includes/obstacle_detector.xml" if="$(arg use_lidar_detect)">
+        <arg name="robot_ns" value="solamr_1"/>
+    </include>
+    
+
+<!-- Aruco detection -->
+    <include file="$(find amr_gazebo)/launch/includes/aruco_detect.xml" if="$(arg use_aruco_detect)">
+    <!-- namespace for camera input -->
+        <arg name="camera" default="/solamr_1/camera/rgb"/>
+        <arg name="image" default="image_raw"/>
+        <arg name="transport" default="compressed"/>
+        <arg name="fiducial_len" default="0.25"/>
+        <arg name="dictionary" default="10"/>
+        <arg name="do_pose_estimation" default="true"/>
+        <arg name="ignore_fiducials" default="" />
+        <arg name="fiducial_len_override" default="" />
+    </include>
+
+
+  <!-- broadcast tf of arucos -->
+    <node pkg="amr_gazebo" type="aruco_publisher.py" name="aruco_tf2_broadcast" if="$(arg use_aruco_detect)"/>
+
+<!-- Auto-Connector node 
+    <node pkg="amr_gazebo" type="auto_connector.py" name="solamr_1_AC" output="screen">
+        <param name="robot_ns" value="solamr_1"/>
+    </node>-->
+
+<!-- rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/single_solamr.rviz" if="$(arg use_rviz)" />
+
+
+<!-- Object Recognition (NOT IN USE)-->
+    <arg name="gui" default="true"/>
+    <arg name="image_topic" default="/solamr_1/camera/rgb/image_raw"/>
+    <arg name="session_path" default="$(find amr_gazebo)/config/od_2d_bCart_session.bin"/>
+    <arg name="settings_path" default="~/.ros/find_object_2d.ini"/>
+
+    <node name="find_object_2d" pkg="find_object_2d" type="find_object_2d" output="screen" if="$(arg use_find_object)">
+        <remap from="image" to="$(arg image_topic)"/>
+        <param name="gui" value="$(arg gui)" type="bool"/>
+        <param name="session_path" value="$(arg session_path)" type="str"/>
+        <param name="settings_path" value="$(arg settings_path)" type="str"/>
+    </node>
+
+<!-- joy teleop -->
+    <!--
+    <arg name="single" default="true"/>
+    -->
+
+    <arg name="joy_maxVel" value=".5" />
+    <arg name="joy_accele" value=".01"/>
+
+    <!-- solamr_1 -->
+    <node pkg="amr_gazebo" type="teleop_joy.py" name="solamr_1_teleop" output="screen" if="$(arg use_joy)">
+        <param name="robot_ns" value="solamr_1" />
+        <param name="max_velocity" value="$(arg joy_maxVel)" />
+        <param name="acceleration" value="$(arg joy_accele)" />
+    </node>
+
+    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" if="$(arg use_joy)">
+        <param name="dev" type="string" value="/dev/input/js0" />
+        <remap from="/joy" to="/solamr_1/joy" />
+	    <param name="deadzone" value="0.0" />
+	    <param name="autorepeat_rate" value="130" />
+    </node>
+
+<!-- keyboard teleop -->
+    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_teleop" output="screen" unless="$(arg use_joy)">
+        <!--
+        <param name="robot_ns" value="solamr_1" />
+-->
+    </node>
+
+</launch>
