@@ -30,7 +30,7 @@
 
   <gazebo reference="wheel_left_link">
     <mu1>10</mu1>
-    <mu2>1</mu2>
+    <mu2>5</mu2>
     <kp>50000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.001</minDepth>
@@ -41,7 +41,7 @@
 
   <gazebo reference="wheel_right_link">
     <mu1>10</mu1>
-    <mu2>1</mu2>
+    <mu2>5</mu2>
     <kp>50000.0</kp>
     <kd>10.0</kd>
     <minDepth>0.001</minDepth>
