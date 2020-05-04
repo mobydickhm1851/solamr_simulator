@@ -40,20 +40,20 @@
       <joint name="${prefix}_${suffix}_caster_joint" type="fixed">
         <parent link= "chassis"/>
         <child link= "${prefix}_${suffix}_caster"/>
-        <origin xyz= "${(chassis_length/2)*X1 + (chassis_length/2-.05)*X2} ${(chassis_width/2-0.02)*Y1 + (chassis_width/2)*Y2}  0.026" rpy="0 0 0"/>
+        <origin xyz= "${(chassis_length/2)*X1 + (chassis_length/2-.05)*X2} ${(chassis_width/2-0.02)*Y1 + (chassis_width/2)*Y2} 0 " rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.0"/>  
       </joint>
                
       <link name= "${prefix}_${suffix}_caster">
         <visual>
-          <origin rpy= "${PI/2} 0 0" xyz= "0 0 -0.025"/>
+          <origin rpy= "${PI/2} 0 0" xyz= "0 0 0"/>
           <geometry>
               <mesh filename="package://amr_description/meshes/solamr/caster.stl" scale="0.0002 0.0002 0.0002"/>
           </geometry>
           <material name= "grey"/>
         </visual>
         <collision>
-          <origin rpy= "${PI/2} 0 0" xyz= "0 0 0"/>
+          <origin rpy= "${PI/2} 0 0" xyz= "0 0 ${caster_radius + 0.0011}"/>
           <geometry>
             <cylinder length="${caster_length}" radius= "${caster_radius}"/>
           </geometry>
@@ -101,7 +101,7 @@
     
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="15"/>
+      <mass value="50"/>
       <inertia ixx="1.15625e-01" ixy="0" ixz="0"
                iyy="1.15625e-01" iyz="0"
                izz="2.25e-01" />
@@ -111,7 +111,7 @@
   <joint name="wheel_left_joint" type="continuous">
     <parent link="chassis"/>
     <child link="wheel_left_link"/>
-    <origin xyz="0.0 ${chassis_width/2-0.05} 0.033" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 ${chassis_width/2-0.05} ${0.033*1.5}" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -119,7 +119,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-          <mesh filename="package://amr_description/meshes/solamr/left_tire.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="package://amr_description/meshes/solamr/left_tire.stl" scale="0.0015 0.0015 0.0015"/>
       </geometry>
       <material name="dark"/>
     </visual>
@@ -127,7 +127,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.018" radius="0.033"/>
+          <cylinder length="0.018" radius="${0.033*1.5}"/>
       </geometry>
     </collision>
 
@@ -143,7 +143,7 @@
   <joint name="wheel_right_joint" type="continuous">
     <parent link="chassis"/>
     <child link="wheel_right_link"/>
-    <origin xyz="0.0 -${chassis_width/2-0.05} 0.033" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 -${chassis_width/2-0.05} ${0.033*1.5}" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -151,7 +151,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="1.57 0 0"/>
       <geometry>
-          <mesh filename="package://amr_description/meshes/solamr/right_tire.stl" scale="0.001 0.001 0.001"/>
+          <mesh filename="package://amr_description/meshes/solamr/right_tire.stl" scale="0.0015 0.0015 0.0015"/>
       </geometry>
       <material name="dark"/>
     </visual>
@@ -159,7 +159,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <cylinder length="0.018" radius="0.033"/>
+          <cylinder length="0.018" radius="${0.033*1.5}"/>
       </geometry>
     </collision>
 
@@ -246,13 +246,6 @@
 <!-- #####  A1 PART ##### -->
 <!-- #####    END   ##### -->
 
-<gazebo>
-  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-    <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
-  </plugin>
-</gazebo>
-
-
 
 <!-- #####   BEGIN  ##### -->
 <!-- #####  A2 PART ##### -->
@@ -261,16 +254,15 @@
   <joint name="A2_top_joint" type="fixed">
     <parent link="chassis"/>
     <child link="A2_top" />
-    <origin xyz="0 0 0.18" rpy="0 0 0"/>
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
   </joint>
 
   <link name="A2_top">
     <visual>
-      <origin xyz="0.0 0 0.0" rpy="0 0 -${PI/2}"/>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
       <geometry>
-          <mesh filename="package://amr_description/meshes/solamr/A2_top_H.stl" scale="0.02 ${0.01*chassis_length/0.65} 0.01"/>
+          <mesh filename="package://amr_description/meshes/solamr/rod_A_top_100.stl" scale="0.0065 0.0065 0.0065"/>
         <!--
-        <mesh filename="package://amr_description/meshes/solamr/A2_top_extr10mm_H.stl" scale="0.01 0.01 0.01"/>
 -->
       </geometry>
       <material name="white"/>
@@ -278,11 +270,10 @@
 
     <collision>
       <max_contacts>1</max_contacts>
-      <origin xyz="0.0 0 0.0" rpy="0 0 -${PI/2}"/>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
       <geometry>
-          <mesh filename="package://amr_description/meshes/solamr/A2_top_H.stl" scale="0.02 ${0.01*chassis_length/0.65} 0.01"/>
+          <mesh filename="package://amr_description/meshes/solamr/rod_A_top_100.stl" scale="0.0065 0.0065 0.0065"/>
         <!--
-        <mesh filename="package://amr_description/meshes/solamr/A2_top_extr10mm_H.stl" scale="0.01 0.01 0.01"/>
 -->
       </geometry>
     </collision>
@@ -310,7 +301,7 @@
   <joint name="blocker_joint" type="continuous">
     <parent link="chassis"/>
     <child link="blocker"/>
-    <origin xyz="-0.02 0 .2" rpy="0 1.57 0"/>
+    <origin xyz="0.04 0 .1" rpy="0 1.57 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 

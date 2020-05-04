@@ -10,53 +10,7 @@
     </plugin>
   </gazebo>
 
-
-  <gazebo reference="chassis">
-      <material>Gazebo/CeilingTiled</material>
-  </gazebo>
-
-  <gazebo reference="A2_top">
-      <material>Gazebo/PointCloud</material>
-      <mu1>10</mu1>
-      <mu2>10</mu2>
-      <kp>1000000</kp> 
-      <kd>10</kd>
-      <maxVel>0.</maxVel>
-      <minDepth>0.001</minDepth>
-  </gazebo>
-
-  <gazebo reference="blocker">
-      <material>Gazebo/OrangeTransparentOverlay</material>
-      <mu1>0</mu1>
-      <mu2>0</mu2>
-      <kp>1000000</kp> 
-      <kd>10</kd>
-      <maxVel>0.</maxVel>
-      <minDepth>0.001</minDepth>
-  </gazebo>
-
-  <gazebo reference="wheel_left_link">
-    <mu1>10</mu1>
-    <mu2>10</mu2>
-    <kp>1000000.0</kp>
-    <kd>10.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>3</maxVel>
-    <fdir1>1 0 0</fdir1>
-    <material>Gazebo/FlatBlack</material>
-  </gazebo>
-
-  <gazebo reference="wheel_right_link">
-    <mu1>10</mu1>
-    <mu2>10</mu2>
-    <kp>1000000.0</kp>
-    <kd>10.0</kd>
-    <minDepth>0.001</minDepth>
-    <maxVel>3</maxVel>
-    <fdir1>1 0 0</fdir1>
-    <material>Gazebo/FlatBlack</material>
-  </gazebo>
-  <!--
+<!--
   <gazebo>
     <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
       <robotNamespace>$(arg robotName)</robotNamespace> 
@@ -66,21 +20,58 @@
     </plugin>
   </gazebo>
 -->
+<!-- FOR 2-in-1 -->
+  <gazebo reference="chassis_1">
+      <material>Gazebo/CeilingTiled</material>
+  </gazebo>
+
+  <gazebo reference="A2_top_1">
+      <material>Gazebo/PointCloud</material>
+      <mu1>10</mu1>
+      <mu2>10</mu2>
+      <kp>1000000</kp> 
+      <kd>10</kd>
+      <maxVel>0.</maxVel>
+      <minDepth>0.001</minDepth>
+  </gazebo>
+
+  <gazebo reference="wheel_left_link_1">
+    <mu1>10</mu1>
+    <mu2>5</mu2>
+    <kp>1000000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>3</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <gazebo reference="wheel_right_link_1">
+    <mu1>10</mu1>
+    <mu2>5</mu2>
+    <kp>1000000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>3</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
   <gazebo>
-    <plugin name="solamr_controller" filename="libgazebo_ros_diff_drive.so">
-      <commandTopic>cmd_vel</commandTopic>
-      <odometryTopic>odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+    <plugin name="solamr_controller_1" filename="libgazebo_ros_diff_drive.so">
+      <commandTopic>cmd_vel_1</commandTopic>
+      <odometryTopic>odom_1</odometryTopic>
+      <odometryFrame>odom_1</odometryFrame>
       <odometrySource>world</odometrySource>
       <publishOdomTF>true</publishOdomTF>
-      <robotBaseFrame>base_footprint</robotBaseFrame>
+      <robotBaseFrame>base_footprint_1</robotBaseFrame>
       <publishWheelTF>false</publishWheelTF>
       <publishTf>true</publishTf>
       <publishWheelJointState>true</publishWheelJointState>
       <legacyMode>false</legacyMode>
       <updateRate>30</updateRate>
-      <leftJoint>wheel_left_joint</leftJoint>
-      <rightJoint>wheel_right_joint</rightJoint>
+      <leftJoint>wheel_left_joint_1</leftJoint>
+      <rightJoint>wheel_right_joint_1</rightJoint>
       <wheelSeparation>0.20</wheelSeparation>
       <wheelDiameter>0.099</wheelDiameter>
       <wheelAcceleration>10</wheelAcceleration>
@@ -89,7 +80,66 @@
     </plugin>
   </gazebo>
 
+  <gazebo reference="chassis_2">
+      <material>Gazebo/CeilingTiled</material>
+  </gazebo>
 
+  <gazebo reference="A2_top_2">
+      <material>Gazebo/PointCloud</material>
+      <mu1>10</mu1>
+      <mu2>10</mu2>
+      <kp>1000000</kp> 
+      <kd>10</kd>
+      <maxVel>0.</maxVel>
+      <minDepth>0.001</minDepth>
+  </gazebo>
+
+  <gazebo reference="wheel_left_link_2">
+    <mu1>10</mu1>
+    <mu2>5</mu2>
+    <kp>1000000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>3</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <gazebo reference="wheel_right_link_2">
+    <mu1>10</mu1>
+    <mu2>5</mu2>
+    <kp>1000000.0</kp>
+    <kd>10.0</kd>
+    <minDepth>0.001</minDepth>
+    <maxVel>3</maxVel>
+    <fdir1>1 0 0</fdir1>
+    <material>Gazebo/FlatBlack</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="solamr_controller_2" filename="libgazebo_ros_diff_drive.so">
+      <commandTopic>cmd_vel_2</commandTopic>
+      <odometryTopic>odom_2</odometryTopic>
+      <odometryFrame>odom_2</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
+      <robotBaseFrame>base_footprint_2</robotBaseFrame>
+      <publishWheelTF>false</publishWheelTF>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>true</publishWheelJointState>
+      <legacyMode>false</legacyMode>
+      <updateRate>30</updateRate>
+      <leftJoint>wheel_left_joint_2</leftJoint>
+      <rightJoint>wheel_right_joint_2</rightJoint>
+      <wheelSeparation>0.20</wheelSeparation>
+      <wheelDiameter>0.099</wheelDiameter>
+      <wheelAcceleration>10</wheelAcceleration>
+      <wheelTorque>100</wheelTorque>
+      <rosDebugLevel>na</rosDebugLevel>
+    </plugin>
+  </gazebo>
+
+<?ignore
   <gazebo reference="scan_front">
     <material>Gazebo/FlatBlack</material>
     <sensor type="ray" name="scan_front">
@@ -155,46 +205,6 @@
       </plugin>
     </sensor>
   </gazebo>
-<!--
-
-  <gazebo reference="imu_link">
-    <sensor type="imu" name="imu">
-      <always_on>true</always_on>
-      <visualize>$(arg imu_visual)</visualize>
-    </sensor>
-    <material>Gazebo/Grey</material>
-  </gazebo>
-
-  <gazebo>
-    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
-      <alwaysOn>true</alwaysOn>
-      <bodyName>imu_link</bodyName>
-      <frameName>imu_link</frameName>
-      <topicName>imu</topicName>
-      <serviceName>imu_service</serviceName>
-      <gaussianNoise>0.0</gaussianNoise>
-      <updateRate>200</updateRate>
-      <imu>
-        <noise>
-          <type>gaussian</type>
-          <rate>
-            <mean>0.0</mean>
-            <stddev>2e-4</stddev>
-            <bias_mean>0.0000075</bias_mean>
-            <bias_stddev>0.0000008</bias_stddev>
-          </rate>
-          <accel>
-            <mean>0.0</mean>
-            <stddev>1.7e-2</stddev>
-            <bias_mean>0.1</bias_mean>
-            <bias_stddev>0.001</bias_stddev>
-          </accel>
-        </noise>
-      </imu>
-    </plugin>
-  </gazebo>
-
--->
 
   <gazebo reference="camera_rgb_frame">
     <sensor type="depth" name="realsense_R200">
@@ -203,10 +213,6 @@
       <camera>
           <horizontal_fov>1.3439</horizontal_fov>
           <image>
-              <!--
-              <width>1280</width>
-              <height>720</height>
--->
               <width>640</width>
               <height>480</height>
               <format>R8G8B8</format>
@@ -243,5 +249,46 @@
       </plugin>
     </sensor>
   </gazebo>
+<!--
+  <gazebo reference="imu_link">
+    <sensor type="imu" name="imu">
+      <always_on>true</always_on>
+      <visualize>$(arg imu_visual)</visualize>
+    </sensor>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+      <alwaysOn>true</alwaysOn>
+      <bodyName>imu_link</bodyName>
+      <frameName>imu_link</frameName>
+      <topicName>imu</topicName>
+      <serviceName>imu_service</serviceName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>200</updateRate>
+      <imu>
+        <noise>
+          <type>gaussian</type>
+          <rate>
+            <mean>0.0</mean>
+            <stddev>2e-4</stddev>
+            <bias_mean>0.0000075</bias_mean>
+            <bias_stddev>0.0000008</bias_stddev>
+          </rate>
+          <accel>
+            <mean>0.0</mean>
+            <stddev>1.7e-2</stddev>
+            <bias_mean>0.1</bias_mean>
+            <bias_stddev>0.001</bias_stddev>
+          </accel>
+        </noise>
+      </imu>
+    </plugin>
+  </gazebo>
+-->
+
+?>
+<!-- END of  2-in-1 -->
 
 </robot>

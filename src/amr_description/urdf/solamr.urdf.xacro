@@ -40,7 +40,7 @@
       <joint name="${prefix}_${suffix}_caster_joint" type="fixed">
         <parent link= "chassis"/>
         <child link= "${prefix}_${suffix}_caster"/>
-        <origin xyz= "${(chassis_length/2)*X1 + (chassis_length/2-.05)*X2} ${(chassis_width/2-0.02)*Y1 + (chassis_width/2)*Y2}  0.026" rpy="0 0 0"/>
+        <origin xyz= "${(chassis_length/2)*X1 + (chassis_length/2-.05)*X2} ${(chassis_width/2-0.02)*Y1 + (chassis_width/2)*Y2}  ${caster_radius + 0.01}" rpy="0 0 0"/>
         <dynamics damping="0.0" friction="0.0"/>  
       </joint>
                
@@ -111,7 +111,7 @@
   <joint name="wheel_left_joint" type="continuous">
     <parent link="chassis"/>
     <child link="wheel_left_link"/>
-    <origin xyz="0.0 ${chassis_width/2-0.05} 0.033" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 ${chassis_width/2-0.05} 0.025" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -143,7 +143,7 @@
   <joint name="wheel_right_joint" type="continuous">
     <parent link="chassis"/>
     <child link="wheel_right_link"/>
-    <origin xyz="0.0 -${chassis_width/2-0.05} 0.033" rpy="-1.57 0 0"/>
+    <origin xyz="0.0 -${chassis_width/2-0.05} 0.025" rpy="-1.57 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 
