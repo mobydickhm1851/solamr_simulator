@@ -53,6 +53,11 @@ To employ the factory-like environment, add the following argument while launchi
 ```
 
 ## Keyboard/Joystick Control
+To run teleop control node 
+```
+rosrun amr_gazebo teleop_key_2in1.py
+```
+
 ```
 Control Your SOLamr!
 ---------------------------
