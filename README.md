@@ -53,6 +53,7 @@ To employ the factory-like environment, add the following argument while launchi
 ```
 
 ## Keyboard/Joystick Control
+```
 Control Your SOLamr!
 ---------------------------
 Moving around:
@@ -70,4 +71,4 @@ control both using same command : 1 / 2 / 3
 CTRL-C to quit
 
 credit: Turtlebot
-
+```
