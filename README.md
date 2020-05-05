@@ -14,17 +14,20 @@ Up till now, three cooperative models have been constructed and tested, which ar
 Since Skid Drive SOLamr is not suit for heavy loading (friction on the wheels are too large) and the control scheme is also not robust, Skid Drive SOLamr is depricated. 
 If you still want to launch it, launch this file:
 
-```roslaunch amr_gazebo solamr_skid_shelftx.launch
+```
+roslaunch amr_gazebo solamr_skid_shelftx.launch
 ```
 
 Otherwise, to launch the more preferable version of SOLamr, you can either launch 
 
-```roslaunch amr_gazebo solamr_linked_shelftx.launch
+```
+roslaunch amr_gazebo solamr_linked_shelftx.launch
 ```
 
 or launch 
 
-```roslaunch amr_gazebo solamr_linked_2in1.launch
+```
+roslaunch amr_gazebo solamr_linked_2in1.launch
 ```
 
 The main difference is that for `solamr_linked_shelftx.launch`, we can test **auto connection** function, which will allow SOLamr to find the designated shelft (S or XL) and to connect with them automatically. However, due to the physics model in Gazebo, force transimission by means of contacts can easily failed and result in weired action (e.g. jumping).
@@ -37,14 +40,16 @@ To simulate SOLamr carrying a small shelft (only available in `solamr_skid_shelf
 ### No shelft two SOLamr
 To launch only two SOLamr, simply 
 
-```roslaunch amr_gazebo solamr_only.launch
+```
+roslaunch amr_gazebo solamr_only.launch
 ```
 
 
 ### factory environment
 To employ the factory-like environment, add the following argument while launching Gazebo `empty_world.launch`
 
-```<arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
+```
+<arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
 ```
 
 ## Keyboard/Joystick Control
