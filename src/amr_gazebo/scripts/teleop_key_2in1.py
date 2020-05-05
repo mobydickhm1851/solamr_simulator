@@ -38,7 +38,7 @@ from control_msgs.msg import JointControllerState
 from math import pi as PI
 
 msg = """
-Control Your Turtlebot!
+Control Your SOLamr!
 ---------------------------
 Moving around:
    u    i    o

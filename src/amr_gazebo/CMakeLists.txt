@@ -10,6 +10,7 @@ project(amr_gazebo)
 find_package(catkin REQUIRED COMPONENTS
   gazebo_ros_control
   gazebo_ros
+  aruco_detect
 )
 
 ## System dependencies are found with CMake's conventions

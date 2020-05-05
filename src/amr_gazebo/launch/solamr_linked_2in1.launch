@@ -4,6 +4,9 @@
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+<? ignore
+    <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
+?>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>

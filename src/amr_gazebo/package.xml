@@ -12,12 +12,14 @@
   <depend>gazebo_ros</depend>
 
   <depend>joy</depend>
-  <depend>AMR_description</depend>
+  <depend>amr_description</depend>
   <depend>robot_state_publisher</depend>
   <depend>rospy</depend>
   <depend>rviz</depend>
   <depend>sensor_msgs</depend>
   <depend>tf2_ros</depend>
+  <depend>aruco_detect</depend>
+
 
   <export>
     <!-- Other tools can request additional information be placed here -->
