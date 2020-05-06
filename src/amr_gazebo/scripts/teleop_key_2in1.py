@@ -243,7 +243,7 @@ if __name__=="__main__":
                 solamr_2.blocker_pub.publish(target_angle)
             elif current_bot == 3:
                 solamr_1.vel_pub.publish(twist)
-                twist.linear.x = -twist.linear.x
+                # twist.linear.x = -twist.linear.x
                 solamr_2.vel_pub.publish(twist)
                 target_angle = solamr_1.lockAction(key)
                 solamr_1.blocker_pub.publish(target_angle)
