@@ -23,7 +23,6 @@
 
 <!-- Spawn solamr_1 in Gazebo -->
 <arg name="robot_name" value="solamr_1"/>
-<param name="tf_prefix" value="$(arg robot_name)" />  
 <!-- interpret xacro into urdf-->
 <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr_rod.urdf.xacro robotName:=$(arg robot_name)" />
 <!-- spawn model from parameter server : robot_description -->
