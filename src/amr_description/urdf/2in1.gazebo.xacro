@@ -10,16 +10,7 @@
     </plugin>
   </gazebo>
 
-<!--
-  <gazebo>
-    <plugin name="joint_state_publisher" filename="libgazebo_ros_joint_state_publisher.so">
-      <robotNamespace>$(arg robotName)</robotNamespace> 
-      <jointName>rear_right_wheel_joint, rear_left_wheel_joint, front_right_wheel_joint, front_left_wheel_joint, front_right_steer_joint, front_left_steer_joint, steering_joint</jointName>
-      <updateRate>100.0</updateRate>
-      <alwaysOn>true</alwaysOn>
-    </plugin>
-  </gazebo>
--->
+
 <!-- FOR 2-in-1 -->
   <gazebo reference="chassis_1">
       <material>Gazebo/CeilingTiled</material>
@@ -57,17 +48,54 @@
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
+  <gazebo reference="chassis_1">
+    <sensor type="imu" name="imu">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+    </sensor>
+    <material>Gazebo/Grey</material>
+  </gazebo>
+
+  <gazebo>
+    <plugin name="imu_plugin_1" filename="libgazebo_ros_imu.so">
+      <alwaysOn>true</alwaysOn>
+      <bodyName>chassis_1</bodyName>
+      <frameName>imu_link_1</frameName>
+      <topicName>imu_1</topicName>
+      <serviceName>imu_service_1</serviceName>
+      <gaussianNoise>0.0</gaussianNoise>
+      <updateRate>20</updateRate>
+      <imu>
+        <noise>
+          <type>gaussian</type>
+          <rate>
+            <mean>0.0</mean>
+            <stddev>2e-4</stddev>
+            <bias_mean>0.0000075</bias_mean>
+            <bias_stddev>0.0000008</bias_stddev>
+          </rate>
+          <accel>
+            <mean>0.0</mean>
+            <stddev>1.7e-2</stddev>
+            <bias_mean>0.1</bias_mean>
+            <bias_stddev>0.001</bias_stddev>
+          </accel>
+        </noise>
+      </imu>
+    </plugin>
+  </gazebo>
+
   <gazebo>
     <plugin name="solamr_controller_1" filename="libgazebo_ros_diff_drive.so">
       <commandTopic>cmd_vel_1</commandTopic>
       <odometryTopic>odom_1</odometryTopic>
       <odometryFrame>odom_1</odometryFrame>
       <odometrySource>world</odometrySource>
-      <publishOdomTF>true</publishOdomTF>
-      <robotBaseFrame>base_footprint_1</robotBaseFrame>
+      <publishOdomTF>false</publishOdomTF>
+      <robotBaseFrame>chassis_1</robotBaseFrame>
       <publishWheelTF>false</publishWheelTF>
       <publishTf>true</publishTf>
-      <publishWheelJointState>true</publishWheelJointState>
+      <publishWheelJointState>false</publishWheelJointState>
       <legacyMode>false</legacyMode>
       <updateRate>30</updateRate>
       <leftJoint>wheel_left_joint_1</leftJoint>
@@ -116,157 +144,23 @@
     <material>Gazebo/FlatBlack</material>
   </gazebo>
 
-  <gazebo>
-    <plugin name="solamr_controller_2" filename="libgazebo_ros_diff_drive.so">
-      <commandTopic>cmd_vel_2</commandTopic>
-      <odometryTopic>odom_2</odometryTopic>
-      <odometryFrame>odom_2</odometryFrame>
-      <odometrySource>world</odometrySource>
-      <publishOdomTF>true</publishOdomTF>
-      <robotBaseFrame>base_footprint_2</robotBaseFrame>
-      <publishWheelTF>false</publishWheelTF>
-      <publishTf>true</publishTf>
-      <publishWheelJointState>true</publishWheelJointState>
-      <legacyMode>false</legacyMode>
-      <updateRate>30</updateRate>
-      <leftJoint>wheel_left_joint_2</leftJoint>
-      <rightJoint>wheel_right_joint_2</rightJoint>
-      <wheelSeparation>0.20</wheelSeparation>
-      <wheelDiameter>0.099</wheelDiameter>
-      <wheelAcceleration>10</wheelAcceleration>
-      <wheelTorque>100</wheelTorque>
-      <rosDebugLevel>na</rosDebugLevel>
-    </plugin>
-  </gazebo>
-
-<?ignore
-  <gazebo reference="scan_front">
-    <material>Gazebo/FlatBlack</material>
-    <sensor type="ray" name="scan_front">
-      <pose>0 0 0 0 0 0</pose>
-      <visualize>$(arg laser_visual)</visualize>
-      <update_rate>10</update_rate>
-      <ray>
-        <scan>
-          <horizontal>
-            <samples>725</samples>
-            <resolution>1</resolution>
-            <min_angle>0.0</min_angle>
-            <max_angle>4.712</max_angle>
-          </horizontal>
-        </scan>
-        <range>
-          <min>0.06</min>
-          <max>4.095</max>
-          <resolution>0.1</resolution>
-        </range>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.01</stddev>
-        </noise>
-      </ray>
-      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
-        <topicName>scan_front</topicName>
-        <frameName>scan_front</frameName>
-      </plugin>
-    </sensor>
-  </gazebo>
-
-  <gazebo reference="scan_rear">
-    <material>Gazebo/Blue</material>
-    <sensor type="ray" name="scan_rear">
-      <pose>0 0 0 0 0 0</pose>
-      <visualize>$(arg laser_visual)</visualize>
-      <update_rate>10</update_rate>
-      <ray>
-        <scan>
-          <horizontal>
-            <samples>725</samples>
-            <resolution>1</resolution>
-            <min_angle>0.0</min_angle>
-            <max_angle>4.712</max_angle>
-          </horizontal>
-        </scan>
-        <range>
-          <min>0.06</min>
-          <max>4.095</max>
-          <resolution>0.01</resolution>
-        </range>
-        <noise>
-          <type>gaussian</type>
-          <mean>0.0</mean>
-          <stddev>0.01</stddev>
-        </noise>
-      </ray>
-      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
-        <topicName>scan_rear</topicName>
-        <frameName>scan_rear</frameName>
-      </plugin>
-    </sensor>
-  </gazebo>
-
-  <gazebo reference="camera_rgb_frame">
-    <sensor type="depth" name="realsense_R200">
-      <always_on>true</always_on>
-      <visualize>$(arg camera_visual)</visualize>
-      <camera>
-          <horizontal_fov>1.3439</horizontal_fov>
-          <image>
-              <width>640</width>
-              <height>480</height>
-              <format>R8G8B8</format>
-          </image>
-          <depth_camera></depth_camera>
-          <clip>
-              <near>0.1</near>
-              <far>100</far>
-          </clip>
-      </camera>
-      <plugin name="camera_controller" filename="libgazebo_ros_openni_kinect.so">
-        <baseline>0.2</baseline>
-        <alwaysOn>true</alwaysOn>
-        <updateRate>30.0</updateRate>
-        <cameraName>camera</cameraName>
-        <frameName>camera_rgb_optical_frame</frameName>
-        <imageTopicName>rgb/image_raw</imageTopicName>
-        <depthImageTopicName>depth/image_raw</depthImageTopicName>
-        <pointCloudTopicName>depth/points</pointCloudTopicName>
-        <cameraInfoTopicName>rgb/camera_info</cameraInfoTopicName>
-        <depthImageCameraInfoTopicName>depth/camera_info</depthImageCameraInfoTopicName>
-        <pointCloudCutoff>0.4</pointCloudCutoff>
-            <hackBaseline>0.07</hackBaseline>
-            <distortionK1>0.0</distortionK1>
-            <distortionK2>0.0</distortionK2>
-            <distortionK3>0.0</distortionK3>
-            <distortionT1>0.0</distortionT1>
-            <distortionT2>0.0</distortionT2>
-        <CxPrime>0.0</CxPrime>
-        <Cx>0.0</Cx>
-        <Cy>0.0</Cy>
-        <focalLength>0</focalLength>
-        <hackBaseline>0</hackBaseline>
-      </plugin>
-    </sensor>
-  </gazebo>
-<!--
-  <gazebo reference="imu_link">
+  <gazebo reference="chassis_2">
     <sensor type="imu" name="imu">
       <always_on>true</always_on>
-      <visualize>$(arg imu_visual)</visualize>
+      <visualize>true</visualize>
     </sensor>
     <material>Gazebo/Grey</material>
   </gazebo>
 
   <gazebo>
-    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
+    <plugin name="imu_plugin_2" filename="libgazebo_ros_imu.so">
       <alwaysOn>true</alwaysOn>
-      <bodyName>imu_link</bodyName>
-      <frameName>imu_link</frameName>
-      <topicName>imu</topicName>
-      <serviceName>imu_service</serviceName>
+      <bodyName>chassis_2</bodyName>
+      <frameName>imu_link_2</frameName>
+      <topicName>imu_2</topicName>
+      <serviceName>imu_service_2</serviceName>
       <gaussianNoise>0.0</gaussianNoise>
-      <updateRate>200</updateRate>
+      <updateRate>20</updateRate>
       <imu>
         <noise>
           <type>gaussian</type>
@@ -286,9 +180,30 @@
       </imu>
     </plugin>
   </gazebo>
--->
 
-?>
+
+  <gazebo>
+    <plugin name="solamr_controller_2" filename="libgazebo_ros_diff_drive.so">
+      <commandTopic>cmd_vel_2</commandTopic>
+      <odometryTopic>odom_2</odometryTopic>
+      <odometryFrame>odom_2</odometryFrame>
+      <odometrySource>world</odometrySource>
+      <publishOdomTF>false</publishOdomTF>
+      <robotBaseFrame>chassis_2</robotBaseFrame>
+      <publishWheelTF>false</publishWheelTF>
+      <publishTf>true</publishTf>
+      <publishWheelJointState>false</publishWheelJointState>
+      <legacyMode>false</legacyMode>
+      <updateRate>30</updateRate>
+      <leftJoint>wheel_left_joint_2</leftJoint>
+      <rightJoint>wheel_right_joint_2</rightJoint>
+      <wheelSeparation>0.20</wheelSeparation>
+      <wheelDiameter>0.099</wheelDiameter>
+      <wheelAcceleration>10</wheelAcceleration>
+      <wheelTorque>100</wheelTorque>
+      <rosDebugLevel>na</rosDebugLevel>
+    </plugin>
+  </gazebo>
 <!-- END of  2-in-1 -->
 
 </robot>

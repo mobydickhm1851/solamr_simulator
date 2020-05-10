@@ -4,6 +4,7 @@
   <xacro:arg name="camera_visual" default="false"/>
   <xacro:arg name="imu_visual"    default="false"/>
 
+  
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>

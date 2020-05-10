@@ -108,7 +108,7 @@ class RosTeleop:
 
         current_angle = float(round(self.locker_ang, 3) % PI)
         residual = 0
-        print("current angle : {0}".format(current_angle))
+        #print("current angle : {0}".format(current_angle))
 
         if key_pressed == 't' :
             self.locker_dir = 0

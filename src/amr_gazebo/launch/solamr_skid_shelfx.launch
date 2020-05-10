@@ -8,7 +8,7 @@
   <arg name="use_lidar_detect" default="false" /> 
   <arg name="use_aruco_detect" default="false" /> 
   <arg name="use_find_object" default="false" /> 
-  <arg name="gazebo_gui" default="true" /> 
+  <arg name="gazebo_gui" default="false" /> 
 
 <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -32,7 +32,6 @@
 <!-- Spawn a single_shelf in Gazebo -->
 <group ns="$(arg shelft_type)">
     <arg name="robot_name" value="$(arg shelft_type)"/>
-    <param name="tf_prefix" value="$(arg robot_name)" />  
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/$(arg shelft_type).urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
@@ -43,7 +42,6 @@
 <!-- Spawn solamr_1 in Gazebo -->
 <group ns="solamr_1">
     <arg name="robot_name" value="solamr_1"/>
-    <param name="tf_prefix" value="$(arg robot_name)" />  
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr.urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->

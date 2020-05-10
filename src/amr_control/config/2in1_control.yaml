@@ -1,0 +1,14 @@
+    # Publish all joint states -----------------------------------
+    joint_state_controller:
+        type: joint_state_controller/JointStateController
+        publish_rate: 50
+
+    # Position Controllers ---------------------------------------
+    #solamr_1_position_controller:
+    #    type: position_controllers/JointPositionController
+    #    joint: base_joint_1
+
+
+    #solamr_2_position_controller:
+    #    type: position_controllers/JointPositionController
+    #    joint: base_joint_2
