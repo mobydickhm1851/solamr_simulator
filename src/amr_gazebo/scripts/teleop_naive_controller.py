@@ -39,7 +39,8 @@ from math import pi as PI
 import math 
 import tf 
 
-KP = 1
+KP = 4
+KI = 0.01
 L = 0.76
 
 msg = """
@@ -256,7 +257,7 @@ def shelf_odom_cb(odom):
     shelf_theta = euler[2]
 
 if __name__=="__main__":
-    global target_theta 
+    global target_theta
 
     settings = termios.tcgetattr(sys.stdin)
     
@@ -268,7 +269,8 @@ if __name__=="__main__":
     solamr_2 = RosTeleop("_2") 
     try:
         print(msg)
-        
+        sum_error1 = 0.0
+        sum_error2 = 0.0
         while(1):
             key = getKey()
 
@@ -298,22 +300,24 @@ if __name__=="__main__":
             print ("solamr_1.theta: " + str(solamr_1.theta))
             print ("solamr_2.theta: " + str(solamr_2.theta))
             print ("shelf_theta : " + str(shelf_theta))
-            print ("mode : " + str(mode))
+            print ("sum_error1 : " + str(sum_error1))
 
             cmd_rot = 0.0
             if mode=="heading_adjustment":
                 cmd_rot = twist.angular.z 
             
-            twist.angular.z = cal_theta_error(target_theta, solamr_1.theta) * KP
+            error1 = cal_theta_error(target_theta, solamr_1.theta)
+            sum_error1 += error1
+            twist.angular.z = error1 * KP + sum_error1 * KI
             if mode=="heading_adjustment" :# and twist.angular.z < 0.1:
                 twist.linear.x =    (L/2) * cmd_rot
-            
             solamr_1.vel_pub.publish(twist)
-
-            twist.angular.z = cal_theta_error(target_theta, solamr_2.theta) * KP
+            
+            error2 = cal_theta_error(target_theta, solamr_1.theta)
+            sum_error2 += error2
+            twist.angular.z = error2 * KP + sum_error2 * KI
             if mode=="heading_adjustment" : # and twist.angular.z < 0.1:
                 twist.linear.x =  - (L/2) * cmd_rot
-            
             solamr_2.vel_pub.publish(twist)
 
     except Exception as e:
