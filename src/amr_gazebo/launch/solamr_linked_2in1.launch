@@ -36,8 +36,8 @@
     </node>
 
 <!-- keyboard teleop -->
-    <node pkg="amr_gazebo" type="teleop_key_2in1.py" name="solamr_teleop" output="screen">
-    </node>
+    <!--node pkg="amr_gazebo" type="teleop_key_2in1.py" name="solamr_teleop" output="screen"/-->
+    <node pkg="amr_gazebo" type="teleop_naive_controller.py" name="teleop_naive_controller" output="screen"/>
 
 
 </launch>
