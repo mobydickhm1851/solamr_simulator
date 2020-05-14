@@ -117,11 +117,16 @@ class AutoConnect:
         return ang_temp
 
     def checkOrientation(self, point, goal_th=None, backward=True):
+        ''' more tolerance is accepted if only going to that direction, not final turning '''
         goal = self.checkSudoGoal(point, backward)
-        if goal_th is None: theta_diff = self.pointAngularDiff(point)
-        else : theta_diff = self.angularDiff(goal_th)
-        if abs(theta_diff) <= self.THETA_TOL: return True
-        else: return False
+        if goal_th is None: 
+            theta_diff = self.pointAngularDiff(point)
+            if abs(theta_diff) <= 5 * self.THETA_TOL: return True
+            else: return False
+        else : 
+            theta_diff = self.angularDiff(goal_th)
+            if abs(theta_diff) <= self.THETA_TOL: return True
+            else: return False
 
 
     def euclideanDist(self, goal):
@@ -202,21 +207,30 @@ class AutoConnect:
 
         r = rospy.Rate(self.PUB_RATE)
         cmd_vel = Twist()
+        xyREACHED = False
+        straightDIST = 1.0 # meter
+
         while not self.checkOrientation(goal, theta) or self.euclideanDist(goal) > self.POSE_TOL :
             DIST2GOAL = self.euclideanDist(goal)
-            cmd_vel.linear.x = self.linearVel(goal, theta)
+            cmd_vel.linear.x = self.linearVel(goal)
+            print("dist to goal = {0}".format(self.euclideanDist(goal)))
+
             if DIST2GOAL > self.POSE_TOL : 
                 cmd_vel.angular.z = self.angularVel(goal) 
                 print("theta diff = {0}".format(self.pointAngularDiff(goal)))
             else : 
                 cmd_vel.angular.z = self.angularVel(goal, goal_th=theta) 
                 print("theta diff = {0}".format(self.angularDiff(theta)))
-            # set to 0 when goal pose or orientation is reached 
-            print("dist to goal = {0}".format(self.euclideanDist(goal)))
+
+            if DIST2GOAL <= straightDIST and not self.checkOrientation(goal):
+                cmd_vel.linear.x = 0.0
+
+            ''' set to 0 when goal pose or orientation is reached '''
             if self.checkOrientation(goal, theta) :
                 cmd_vel.angular.z = 0.0
-            if self.euclideanDist(goal) <= self.POSE_TOL:
+            if DIST2GOAL <= self.POSE_TOL or xyREACHED:
                 cmd_vel.linear.x = 0.0
+                xyREACHED = True
 
             self.twist_pub.publish(cmd_vel)
             r.sleep()
