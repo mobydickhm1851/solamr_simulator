@@ -22,9 +22,9 @@ class AutoConnect:
         self.PUB_RATE = 30
         self.MAX_OMEGA = PI/3
         self.MAX_VEL = .5
-        self.MIN_OMEGA = 0.001
+        self.MIN_OMEGA = 0.01
         self.MIN_VEL = 0.001
-        self.MIN_OMEGA_RATIO = 0.2
+        self.MIN_OMEGA_RATIO = 0.5
         self.MIN_VEL_RATIO = 0.5
         self.pose_now = Point()
         self.theta = 0.0
@@ -91,7 +91,9 @@ class AutoConnect:
         return  (theta_goal - self.theta)
 
     def angularDiff(self, goal_th):
-        return  (goal_th - self.theta)
+        diff = (goal_th - self.theta)
+        if diff > 0: return diff%(2*PI)
+        else : return diff%(-2*PI)
         
     def angularVel(self, point, RATE=None, goal_th=None, backward=True):
         if RATE is None: RATE = self.MIN_OMEGA_RATIO
@@ -99,8 +101,8 @@ class AutoConnect:
         if goal_th is None: theta_diff = self.pointAngularDiff(point)
         else : theta_diff = self.angularDiff(goal_th)
         ''' prevent oscilliation '''
-        if abs(theta_diff) < self.THETA_TOL*2 : RATE*=0.05
-        elif abs(theta_diff) < self.THETA_TOL*5 : RATE*=0.2
+        if abs(theta_diff) < self.THETA_TOL*2 : RATE*=0.3
+        elif abs(theta_diff) < self.THETA_TOL*11 : RATE*=0.5
         ''' turn CW or CCW '''
         if theta_diff > 0:
             if theta_diff > PI: 
@@ -121,7 +123,7 @@ class AutoConnect:
         goal = self.checkSudoGoal(point, backward)
         if goal_th is None: 
             theta_diff = self.pointAngularDiff(point)
-            if abs(theta_diff) <= 5 * self.THETA_TOL: return True
+            if abs(theta_diff) <= 11 * self.THETA_TOL: return True
             else: return False
         else : 
             theta_diff = self.angularDiff(goal_th)
@@ -209,28 +211,28 @@ class AutoConnect:
         cmd_vel = Twist()
         xyREACHED = False
         straightDIST = 1.0 # meter
-
         while not self.checkOrientation(goal, theta) or self.euclideanDist(goal) > self.POSE_TOL :
             DIST2GOAL = self.euclideanDist(goal)
             cmd_vel.linear.x = self.linearVel(goal)
-            print("dist to goal = {0}".format(self.euclideanDist(goal)))
+            #print("dist to goal = {0}".format(self.euclideanDist(goal)))
 
             if DIST2GOAL > self.POSE_TOL : 
                 cmd_vel.angular.z = self.angularVel(goal) 
-                print("theta diff = {0}".format(self.pointAngularDiff(goal)))
-            else : 
+                #print("theta diff to point = {0}".format(self.pointAngularDiff(goal)))
+                
+                if DIST2GOAL <= straightDIST and not self.checkOrientation(goal):
+                    cmd_vel.linear.x = 0.0
+                    #print("In stage 2 !")
+                else: 
+                    pass
+                    #print("In stage 3 !")
+
+            elif DIST2GOAL <= self.POSE_TOL or xyREACHED : 
                 cmd_vel.angular.z = self.angularVel(goal, goal_th=theta) 
-                print("theta diff = {0}".format(self.angularDiff(theta)))
-
-            if DIST2GOAL <= straightDIST and not self.checkOrientation(goal):
-                cmd_vel.linear.x = 0.0
-
-            ''' set to 0 when goal pose or orientation is reached '''
-            if self.checkOrientation(goal, theta) :
-                cmd_vel.angular.z = 0.0
-            if DIST2GOAL <= self.POSE_TOL or xyREACHED:
                 cmd_vel.linear.x = 0.0
                 xyREACHED = True
+                #print("theta diff = {0}".format(self.angularDiff(theta)))
+                #print("In stage 1 !")
 
             self.twist_pub.publish(cmd_vel)
             r.sleep()
@@ -344,46 +346,91 @@ class AutoConnect:
 
 if __name__ == '__main__':
     from pynput import keyboard
-    COMBINATIONS = [
+    COMB_LIST = [
+        {keyboard.Key.ctrl, keyboard.KeyCode(char='l')},
+        {keyboard.Key.ctrl, keyboard.KeyCode(char='L')}
+    ]
+    COMB_START = [
         {keyboard.Key.ctrl, keyboard.KeyCode(char='g')},
         {keyboard.Key.ctrl, keyboard.KeyCode(char='G')}
     ]
+    COMB_NUM = [ keyboard.KeyCode(char='{0}'.format(i)) for i in range(10) ]
 
     current = set()
+    target_id = 0
 
-    def execute():
-        print("moving?")
-        goal_pt = Point()
-        goal_pt.x = -1
-        goal_pt.y = 2
-        solamr.move2Goal(goal_pt, PI)
-        print("Done MOving")
+    def aruco_list():
 
-        #print(solamr0.shelft_dict)
-        #input_num = 202
-        #goal = solamr0.shelft_dict[202][0]
-        #theta = solamr0.shelft_dict[202][1]
-        #print(solamr0.subGoal(goal, theta, 2))
-        #solamr0.move2Goal(input_num)
+        ''' Get Available Aruco '''
+        print("\nHere are the list of available Arucos:")
+        for s in range(len(solamr.shelft_dict.keys())):
+            print("Aruco NO.{0}".format(s))
+            key = solamr.shelft_dict.keys()[s]
+            print("ID:{0} \nPose:\n{1} \nTheta:{2}".format(s, solamr.shelft_dict[key][0], solamr.shelft_dict[key][1]))
+        print("\nChoose the Aruco No. to connect to (type the number 0~9)")
+        print("Then press Ctrl+G to start connecting.")
+
+    def connect(s_id):
+        print("\nConnecting to Aruco {0}".format(s_id))
+
+        ''' 0. Moving closer (2m) for more accurate pose estimation'''
+        goal = solamr.shelft_dict[s_id][0]
+        theta = solamr.shelft_dict[s_id][1]
+        print("When Further. Goal:{0}, Theta:{1}".format(goal, theta))
+        sub_goal = solamr.subGoal(goal, theta, 2)
+        rospy.loginfo("\nMoving to \n{0} for more accurate pose".format(sub_goal))
+        solamr.move2Goal(sub_goal, theta + PI)
+
+        ''' 1. Go to sub goal to align with the connector on B cart.''' 
+        goal = solamr.shelft_dict[s_id][0]
+        theta = solamr.shelft_dict[s_id][1]
+        print("When Closer. Goal:{0}, Theta:{1}".format(goal, theta))
+        sub_goal = solamr.subGoal(goal,theta,1)
+        rospy.loginfo("\nMoving to \n{0}".format(sub_goal))
+        solamr.move2Goal(sub_goal, theta + PI)
+
+        ''' 2. Connecting '''
+        goal = solamr.shelft_dict[s_id][0]
+        theta = solamr.shelft_dict[s_id][1]
+        rospy.loginfo("Connecting...")
+        rospy.loginfo("\nMoving to \n{0}".format(goal))
+        solamr.move2Goal(goal, theta + PI)
+        rospy.loginfo("Connected!!!")
+
 
     def on_press(key):
-        if any([key in COMBO for COMBO in COMBINATIONS]):
+        global target_id
+        if key in COMB_NUM:
+            num = int(key.char)
+            if num <= len(solamr.shelft_dict.keys()) - 1:
+                target_id = solamr.shelft_dict.keys()[num]
+                print("\nTarget Aruco ID set to {0}".format(target_id))
+
+            else: print("\nIndex {0} for Aruco No. is out of range!".format(num))
+            
+        elif any([key in COMBO for COMBO in COMB_LIST] + [key in COMBO for COMBO in COMB_START]):
             current.add(key)
-            if any(all(k in current for k in COMBO) for COMBO in COMBINATIONS):
-                execute()
+            if any(all(k in current for k in COMBO) for COMBO in COMB_LIST):
+                aruco_list()
+            elif any(all(k in current for k in COMBO) for COMBO in COMB_START):
+                connect(target_id)
 
     def on_release(key):
-        if any([key in COMBO for COMBO in COMBINATIONS]):
+        if any([key in COMBO for COMBO in COMB_LIST] + [key in COMBO for COMBO in COMB_START]):
             current.remove(key)
         elif key == keyboard.Key.esc:
             return False  # to end the listener
 
     try:
         solamr = AutoConnect()
-        print("Press Ctrl-G to begin !")
+        print("Press Ctrl-L to see available Aruco /")
+        print("Press Ctrl-G to begin connection /")
         with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-            listener.join()
-        #rospy.spin()
+            try:
+                print("Waiting for key toggle")
+                listener.join()
+            except Exception as e:
+                print('{0} was pressed'.format(e.args[0]))
     
     except rospy.ROSInterruptException:
         pass

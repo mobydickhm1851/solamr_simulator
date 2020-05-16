@@ -3,6 +3,9 @@
 <launch>
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
+  <arg name="use_rviz" default="true" /> 
+  <arg name="use_aruco_detect" default="true" /> 
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
 <!--
     <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
@@ -34,13 +37,14 @@
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/solamr_rod.urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x -2 -y 1 -z 0 -param robot_description" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x -4 -y 2 -z 0 -param robot_description" />
     <!-- control file: controller spawner, robot_state_publisher -->
     <include file="$(find amr_control)/launch/amr_control.launch">
         <arg name="robot_ns" value="$(arg robot_name)" />
     </include>
 </group>
 
+<?ignore
 <!-- Spawn solamr_2 in Gazebo -->
 <group ns="solamr_2">
     <arg name="robot_name" value="solamr_2"/>
@@ -54,6 +58,26 @@
         <arg name="robot_ns" value="$(arg robot_name)" />
     </include>
 </group>
+?>
+
+<!-- Aruco detection -->
+    <include file="$(find amr_gazebo)/launch/includes/aruco_detect.xml" if="$(arg use_aruco_detect)">
+    <!-- namespace for camera input -->
+        <arg name="camera" default="/solamr_1/camera/rgb"/>
+        <arg name="image" default="image_raw"/>
+        <arg name="transport" default="compressed"/>
+        <arg name="fiducial_len" default="0.25"/>
+        <arg name="dictionary" default="10"/>
+        <arg name="do_pose_estimation" default="true"/>
+        <arg name="ignore_fiducials" default="" />
+        <arg name="fiducial_len_override" default="" />
+    </include>
+
+  <!-- broadcast tf of arucos -->
+    <node pkg="amr_gazebo" type="aruco_publisher.py" name="aruco_tf2_broadcast" if="$(arg use_aruco_detect)"/>
+
+<!-- rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/single_solamr.rviz" if="$(arg use_rviz)" />
 
 <!-- keyboard teleop 
     <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_teleop" output="screen">
