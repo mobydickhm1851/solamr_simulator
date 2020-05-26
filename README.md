@@ -1,7 +1,7 @@
 # SOLamr Simulator
 This package is aimed to develope SOLamr in Gazebo with the following feature : 
 
-1. Auto Connector 
+1. [Auto Connector](https://hackmd.io/i2IS9tFnQKqGmrkJv2_ePQ)  
 2. [Shelft Finder](./src/solamr_pkgs/src/ObjectRecognition.md)
 3. Navigation
 
