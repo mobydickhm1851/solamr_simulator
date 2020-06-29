@@ -1,5 +1,11 @@
 #! /usr/bin/env python
 
+from math import atan2, exp, sqrt, log
+from math import pi as PI
+import copy
+import numpy as np
+import sys
+
 import rospy
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist, TransformStamped
@@ -7,12 +13,7 @@ from fiducial_msgs.msg import FiducialTransform, FiducialTransformArray
 import tf2_ros
 import tf.transformations as t
 from geometry_msgs.msg import Point
-from math import atan2, exp, sqrt, log
-from math import pi as PI
-import copy
-import numpy as np
 from std_msgs.msg import Float64MultiArray, MultiArrayDimension
-import sys
 
 class AutoConnect:
     
@@ -97,7 +98,7 @@ class AutoConnect:
         
     def angularVel(self, point, RATE=None, goal_th=None, backward=True):
         if RATE is None: RATE = self.MIN_OMEGA_RATIO
-        goal = self.checkSudoGoal(point, backward)
+#        goal = self.checkSudoGoal(point, backward)
         if goal_th is None: theta_diff = self.pointAngularDiff(point)
         else : theta_diff = self.angularDiff(goal_th)
         ''' prevent oscilliation '''

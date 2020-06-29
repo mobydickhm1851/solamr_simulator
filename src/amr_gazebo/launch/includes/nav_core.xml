@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="use_rviz" default="true" />
+    <arg name="init_x" default="1.0" />
+    <arg name="init_y" default="1.0" />
+    <arg name="init_a" default="0.0" />
+    <arg name="car_length" default="0.5" />
+
+    <!-- Map server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find amr_gazebo)/maps/maze_s.yaml"/>
+    
+    <!-- AMCL -->
+    <include file="$(find amr_gazebo)/launch/includes/amcl.xml">
+        <arg name="init_x" value="$(arg init_x)"/>
+        <arg name="init_y" value="$(arg init_y)"/>
+        <arg name="init_a" value="$(arg init_a)"/>
+    </include>
+
+    <!-- move base navigation -->
+    <include file="$(find amr_gazebo)/launch/includes/move_base_dwa.xml">
+        <arg name="car_length" value="$(arg car_length)"/>
+    </include>
+
+    <!-- Rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/move_base_dwa.rviz" if="$(arg use_rviz)" />
+
+</launch>

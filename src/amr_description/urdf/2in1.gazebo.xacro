@@ -2,7 +2,7 @@
 <robot name="$(arg robotName)" xmlns:xacro="http://ros.org/wiki/xacro">
   <xacro:arg name="laser_visual"  default="false"/>
   <xacro:arg name="camera_visual" default="false"/>
-  <xacro:arg name="imu_visual"    default="false"/>
+  <xacro:arg name="imu_visual"    default="true"/>
 
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
@@ -13,9 +13,6 @@
 
 
 <!-- FOR 2-in-1 -->
-  <gazebo reference="chassis_1">
-      <material>Gazebo/CeilingTiled</material>
-  </gazebo>
 
   <gazebo reference="A2_top_1">
       <material>Gazebo/PointCloud</material>
@@ -91,12 +88,12 @@
       <commandTopic>cmd_vel_1</commandTopic>
       <odometryTopic>odom_1</odometryTopic>
       <odometryFrame>odom_1</odometryFrame>
-      <odometrySource>world</odometrySource>
-      <publishOdomTF>false</publishOdomTF>
+      <odometrySource>map</odometrySource>
+      <publishOdomTF>true</publishOdomTF>
       <robotBaseFrame>chassis_1</robotBaseFrame>
       <publishWheelTF>false</publishWheelTF>
       <publishTf>true</publishTf>
-      <publishWheelJointState>false</publishWheelJointState>
+      <publishWheelJointState>true</publishWheelJointState>
       <legacyMode>false</legacyMode>
       <updateRate>30</updateRate>
       <leftJoint>wheel_left_joint_1</leftJoint>
@@ -109,9 +106,6 @@
     </plugin>
   </gazebo>
 
-  <gazebo reference="chassis_2">
-      <material>Gazebo/CeilingTiled</material>
-  </gazebo>
 
   <gazebo reference="A2_top_2">
       <material>Gazebo/PointCloud</material>
@@ -188,12 +182,12 @@
       <commandTopic>cmd_vel_2</commandTopic>
       <odometryTopic>odom_2</odometryTopic>
       <odometryFrame>odom_2</odometryFrame>
-      <odometrySource>world</odometrySource>
+      <odometrySource>map</odometrySource>
       <publishOdomTF>false</publishOdomTF>
       <robotBaseFrame>chassis_2</robotBaseFrame>
-      <publishWheelTF>false</publishWheelTF>
+      <publishWheelTF>true</publishWheelTF>
       <publishTf>true</publishTf>
-      <publishWheelJointState>false</publishWheelJointState>
+      <publishWheelJointState>true</publishWheelJointState>
       <legacyMode>false</legacyMode>
       <updateRate>30</updateRate>
       <leftJoint>wheel_left_joint_2</leftJoint>
@@ -204,6 +198,138 @@
       <wheelTorque>100</wheelTorque>
       <rosDebugLevel>na</rosDebugLevel>
     </plugin>
+  </gazebo>
+
+  <gazebo reference="scan_front_1">
+    <material>Gazebo/FlatBlack</material>
+    <sensor type="ray" name="scan_front_1">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>$(arg laser_visual)</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>725</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>4.712</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>4.095</max>
+          <resolution>0.1</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan_front_1</topicName>
+        <frameName>scan_front_1</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="scan_rear_1">
+    <material>Gazebo/Blue</material>
+    <sensor type="ray" name="scan_rear_1">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>$(arg laser_visual)</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>725</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>4.712</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>4.095</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan_rear_1</topicName>
+        <frameName>scan_rear_1</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="scan_front_2">
+    <material>Gazebo/FlatBlack</material>
+    <sensor type="ray" name="scan_front_2">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>$(arg laser_visual)</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>725</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>4.712</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>4.095</max>
+          <resolution>0.1</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan_front_2</topicName>
+        <frameName>scan_front_2</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="scan_rear_2">
+    <material>Gazebo/Blue</material>
+    <sensor type="ray" name="scan_rear_2">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>$(arg laser_visual)</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>725</samples>
+            <resolution>1</resolution>
+            <min_angle>0.0</min_angle>
+            <max_angle>4.712</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.06</min>
+          <max>4.095</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_lds_lfcd_controller" filename="libgazebo_ros_laser.so">
+        <topicName>scan_rear_2</topicName>
+        <frameName>scan_rear_2</frameName>
+      </plugin>
+    </sensor>
   </gazebo>
 <!-- END of  2-in-1 -->
 

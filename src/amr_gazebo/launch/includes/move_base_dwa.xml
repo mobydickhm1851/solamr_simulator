@@ -1,0 +1,57 @@
+<?xml version="1.0" ?>
+<!-- 
+  Simulate a carlike robot with the teb_local_planner in stage:
+  - stage
+  - map_server
+  - move_base
+  - static map
+  - amcl
+  - rviz view
+ -->
+<launch>
+	<arg name="car_length" default="0.5" />
+    	<arg name="l_half" default="$(eval arg('car_length')/2)" />
+    	<arg name="l_half_neg" default="$(eval -arg('car_length')/2)" />
+
+        <!--  ************** Global Parameters ***************  -->
+<!--        <param name="/use_sim_time" value="true"/>
+-->
+        <!--  ************** Stage Simulator ***************  
+	<node pkg="stage_ros" type="stageros" name="stageros" args="$(find teb_local_planner_tutorials)/stage/maze_carlike.world">
+		<remap from="base_scan" to="scan"/>
+  	</node>
+-->
+        <!--  ************** Navigation ***************  -->
+	<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+  	  	<rosparam file="$(find amr_gazebo)/params/move_base_dwa/costmap_common_params.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find amr_gazebo)/params/move_base_dwa/costmap_common_params.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find amr_gazebo)/params/move_base_dwa/local_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find amr_gazebo)/params/move_base_dwa/global_costmap_params.yaml" command="load" />
+  		<rosparam file="$(find amr_gazebo)/params/move_base_dwa/dwa_local_planner_params.yaml" command="load" />
+
+		<!-- take arg to override some of parmas above --> 
+		<rosparam param="global_costmap/footprint" subst_value="True">[ [$(arg l_half_neg),-0.1], [$(arg l_half),-0.1], [$(arg l_half),0.1], [$(arg l_half_neg),0.1] ]</rosparam>
+		<rosparam param="local_costmap/footprint" subst_value="True">[ [$(arg l_half_neg),-0.1], [$(arg l_half),-0.1], [$(arg l_half),0.1], [$(arg l_half_neg),0.1] ]</rosparam>
+
+
+		<!-- move_base parameters -->
+		<param name="base_global_planner" value="global_planner/GlobalPlanner" />
+		<param name="planner_frequency" value="1.0" />
+		<param name="planner_patience" value="5.0" />
+ 		
+			<!-- global planner parameters  -->
+			<param name="GlobalPlanner/use_dijkstra " value="true" />
+			<param name="GlobalPlanner/use_grid_path " value="false" />
+			<param name="GlobalPlanner/use_quadratic " value="true" />
+			<param name="GlobalPlanner/orientation_mode " value="0" />
+
+		<param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+		<param name="controller_frequency" value="5.0" />
+		<param name="controller_patience" value="15.0" />
+
+                <param name="clearing_rotation_allowed" value="true" /> <!-- if carlike: not able to rotate in place -->
+                <remap from="/cmd_vel" to="/solamr_1/cmd_vel" />
+		
+	</node>
+
+</launch>

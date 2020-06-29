@@ -4,9 +4,7 @@
   <env name="GAZEBO_RESOURCE_PATH" value="$(find amr_gazebo)/media/materials"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <?ignore
-    <arg name="world_name" value="$(find amr_gazebo)/worlds/factory_sim.world"/>
-    ?>
+    <arg name="world_name" value="$(find amr_gazebo)/worlds/maze_s.world"/>
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="recording" value="false"/>
@@ -15,29 +13,23 @@
     <arg name="gui" value="true"/>
   </include>
 
-<arg name="robot_type" value="2in1"/>
-
-<!-- Spawn 2-in-1 in Gazebo -->
-<group ns="$(arg robot_type)">
+    <arg name="robot_type" value="2in1"/>
     <arg name="robot_name" value="$(arg robot_type)"/>
     <!-- interpret xacro into urdf-->
     <param name="robot_description" command="$(find xacro)/xacro --inorder $(find amr_description)/urdf/$(arg robot_type).urdf.xacro robotName:=$(arg robot_name)" />
     <!-- spawn model from parameter server : robot_description -->
-    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 0 -y 1 -z 0 -param robot_description" />
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_urdf_$(arg robot_name)" args="-urdf -model $(arg robot_name) -x 5 -y 1 -z 0 -param robot_description" />
     <!-- control file: controller spawner, robot_state_publisher -->
     <include file="$(find amr_control)/launch/2in1_control.launch">
-        <arg name="robot_ns" value="$(arg robot_name)" />
     </include>
-    
-</group>
 
 <!-- IMU to theta -->
     <node pkg="amr_gazebo" type="imu2theta_pub.py" name="imu2theta" output="screen">
     </node>
 
 <!-- keyboard teleop -->
-    <!--node pkg="amr_gazebo" type="teleop_key_2in1.py" name="solamr_teleop" output="screen"/-->
-    <node pkg="amr_gazebo" type="teleop_naive_controller.py" name="teleop_naive_controller" output="screen"/>
+    <node pkg="amr_gazebo" type="teleop_key_2in1.py" name="solamr_teleop" output="screen"/>
+    <!--node pkg="amr_gazebo" type="teleop_naive_controller.py" name="teleop_naive_controller"/-->
 
 
 </launch>

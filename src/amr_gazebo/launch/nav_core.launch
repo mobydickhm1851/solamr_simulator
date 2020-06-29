@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- merge scans for amcl in *_2in1.launch-->
+    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+        <param name="destination_frame" value="solamr_1/base_footprint"/>
+        <param name="cloud_destination_topic" value="/merged_cloud"/>
+        <param name="scan_destination_topic" value="/scan_merged"/>
+        <param name="laserscan_topics" value ="/solamr_1/scan_front /solamr_1/scan_rear "/>
+        <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+
+        <param name="angle_min" value="-3.14"/>
+        <param name="angle_max" value="3.14"/>
+        <param name="angle_increment" value="0.0065083"/>
+        <param name="scan_time" value="0.0"/>
+        <param name="range_min" value="0.06"/>
+        <param name="range_max" value="4.1"/>
+    </node>
+
+    <include file="$(find amr_gazebo)/launch/includes/nav_core.xml"/>
+
+</launch>

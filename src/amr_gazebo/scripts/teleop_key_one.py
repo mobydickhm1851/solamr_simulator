@@ -97,9 +97,9 @@ class RosTeleop:
         self.locker_dir = 0  # Locking direction, 1 = CW, -1 = CCW
         self.locker_state = False
         self.blocker_init = False
-        self.vel_pub = rospy.Publisher('/{0}/cmd_vel'.format(self.robot_ns), Twist, queue_size=5)
-        self.blocker_pub = rospy.Publisher('/{0}/blocker_position_controller/command'.format(self.robot_ns), Float64, queue_size=5)
-        self.locker_sub = rospy.Subscriber("/{0}/blocker_position_controller/state".format(self.robot_ns), JointControllerState, self.lockerAngleUpdate )
+        self.vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=5)
+        self.blocker_pub = rospy.Publisher('/blocker_position_controller/command', Float64, queue_size=5)
+        self.locker_sub = rospy.Subscriber("/blocker_position_controller/state", JointControllerState, self.lockerAngleUpdate )
 
     def lockerAngleUpdate(self, angle):
         self.locker_ang = angle.process_value
@@ -211,14 +211,11 @@ if __name__=="__main__":
     
     rospy.init_node('solamr_teleop', anonymous=True)
     solamr_1 = RosTeleop("solamr_1") 
-    ''' conflic with linked_drive_pub.py '''
-#    solamr_2 = RosTeleop("solamr_2") 
 
     current_bot = 1 # 1 = solamr1; 2 = solamr2; 3 = solamr1 and 2 hve same command
 
     try:
         print(msg)
-        rate = rospy.Rate(10)
         while(1):
             key = getKey()
 
@@ -252,7 +249,6 @@ if __name__=="__main__":
                 target_angle = solamr_2.lockAction(key)
                 solamr_2.blocker_pub.publish(target_angle)
 
-            rate.sleep()
     except Exception as e:
         print(e)
 
@@ -261,7 +257,6 @@ if __name__=="__main__":
         twist.linear.x = 0; twist.linear.y = 0; twist.linear.z = 0
         twist.angular.x = 0; twist.angular.y = 0; twist.angular.z = 0
         solamr_1.vel_pub.publish(twist)
-        ''' conflic with linked_drive_pub.py '''
-#        solamr_2.vel_pub.publish(twist)
+        solamr_2.vel_pub.publish(twist)
 
     termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)

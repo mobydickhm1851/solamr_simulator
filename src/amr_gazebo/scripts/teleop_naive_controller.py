@@ -106,7 +106,7 @@ class RosTeleop:
         self.locker_dir = 0  # Locking direction, 1 = CW, -1 = CCW
         self.locker_state = False
         self.blocker_init = False
-        self.vel_pub = rospy.Publisher('/2in1/cmd_vel{0}'.format(self.robot_ns), Twist, queue_size=5)
+        self.vel_pub = rospy.Publisher('cmd_vel{0}'.format(self.robot_ns), Twist, queue_size=5)
         self.imu_sub = rospy.Subscriber("imu"+ bot_ns + "/theta", Float64 , self.imu_cb)
         self.theta = 0.0 
 
@@ -262,7 +262,7 @@ if __name__=="__main__":
     settings = termios.tcgetattr(sys.stdin)
     
     rospy.init_node('solamr_teleop', anonymous=True)
-    shelf_odom_sub = rospy.Subscriber("2in1/odom_1", Odometry , shelf_odom_cb)
+    shelf_odom_sub = rospy.Subscriber("odom_1", Odometry , shelf_odom_cb)
     
 
     solamr_1 = RosTeleop("_1") 

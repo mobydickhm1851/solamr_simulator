@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="robot_ns"/>
 
   <!-- Load joint controller configurations from YAML file to parameter server -->
   <rosparam file="$(find amr_control)/config/2in1_control.yaml" command="load"/>
@@ -13,9 +12,6 @@
 <!-- convert joint states to TF transforms for rviz, etc --> 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
     respawn="false" output="screen">
-    <param name="tf_prefix" value="$(arg robot_ns)"/>
-    <remap from="robot_description" to="/$(arg robot_ns)/robot_description" />
-    <remap from="/joint_states" to="/$(arg robot_ns)/joint_states" />
 
   </node>
     

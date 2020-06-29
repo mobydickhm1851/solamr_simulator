@@ -197,6 +197,13 @@
 <!-- end           MACRO               end -->
 <!-- ##################################### -->
 
+  <link name="base_footprint"/>
+
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="body" />
+    <origin xyz="0 0 0.0" rpy="0 0 0"/>
+  </joint>
 
   <!-- body-->
   <link name="body">
@@ -208,10 +215,16 @@
     </visual>
 
     <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <geometry>
+          <mesh filename="package://amr_description/meshes/shelft/only_shelft_XL.stl" scale="0.01 0.01 0.01"/>
+      </geometry>
+<!--
        <origin rpy="0 0 0" xyz="0 0 ${leg_length + body_height/2}"/>
        <geometry>
         <box size="${body_length} ${body_width} ${body_height}"/>
        </geometry>
+-->
      </collision>
      <inertial>
          <mass value="1.0"/>
@@ -400,9 +413,9 @@
 <!-- #####   BEGIN  ##### -->
 
   <joint name="base_joint_1" type="continuous">
-    <parent link="body"/>
+    <parent link="B_bot_1"/>
     <child link="chassis_1" />
-    <origin xyz="${body_length/2 - 0.22} 0 -0.01" rpy="0 0 0"/>
+    <origin xyz="0 0 ${-leg_length+0.025-0.01}" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
   </joint>
 <!--
@@ -516,11 +529,11 @@
 
   <joint name="scan_joint_11" type="fixed">
     <parent link="chassis_1"/>
-    <child link="scan_front_11"/>
+    <child link="scan_front_1"/>
     <origin xyz="${chassis_length/2-0.03} ${chassis_width/2-0.03} 0.16" rpy="0 0 -${PI/2}"/>
   </joint>
 
-  <link name="scan_front_11">
+  <link name="scan_front_1">
     <visual>
       <origin xyz="0 0 -.06" rpy="${PI/2} 0 0"/>
       <geometry>
@@ -547,11 +560,11 @@
 
   <joint name="scan_joint_12" type="fixed">
     <parent link="chassis_1"/>
-    <child link="scan_rear_12"/>
+    <child link="scan_rear_1"/>
     <origin xyz="-${chassis_length/2-0.03} -${chassis_width/2-0.03} 0.16" rpy="0 0 ${PI/2}"/>
   </joint>
 
-  <link name="scan_rear_12">
+  <link name="scan_rear_1">
     <visual>
       <origin xyz="0 0 -.06" rpy="${PI/2} 0 0"/>
       <geometry>
@@ -842,11 +855,11 @@
 
   <joint name="scan_joint_21" type="fixed">
     <parent link="chassis_2"/>
-    <child link="scan_front_21"/>
+    <child link="scan_front_2"/>
     <origin xyz="${chassis_length/2-0.03} ${chassis_width/2-0.03} 0.16" rpy="0 0 -${PI/2}"/>
   </joint>
 
-  <link name="scan_front_21">
+  <link name="scan_front_2">
     <visual>
       <origin xyz="0 0 -.06" rpy="${PI/2} 0 0"/>
       <geometry>
@@ -873,11 +886,11 @@
 
   <joint name="scan_joint_22" type="fixed">
     <parent link="chassis_2"/>
-    <child link="scan_rear_22"/>
+    <child link="scan_rear_2"/>
     <origin xyz="-${chassis_length/2-0.03} -${chassis_width/2-0.03} 0.16" rpy="0 0 ${PI/2}"/>
   </joint>
 
-  <link name="scan_rear_22">
+  <link name="scan_rear_2">
     <visual>
       <origin xyz="0 0 -.06" rpy="${PI/2} 0 0"/>
       <geometry>

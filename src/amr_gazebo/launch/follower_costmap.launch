@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="use_rviz" default="true" />
+    <arg name="init_x" default="0.0" />
+    <arg name="init_y" default="1.0" />
+    <arg name="init_a" default="0.0" />
+
+    <!-- merge scans for amcl in *_2in1.launch-->
+    <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
+        <param name="destination_frame" value="solamr_2/base_footprint"/>
+        <param name="cloud_destination_topic" value="/merged_cloud"/>
+        <param name="scan_destination_topic" value="/scan_merged_follower"/>
+        <param name="laserscan_topics" value ="/solamr_2/scan_front /solamr_2/scan_rear "/>
+        <!-- LIST OF THE LASER SCAN TOPICS TO SUBSCRIBE -->
+
+        <param name="angle_min" value="-3.14"/>
+        <param name="angle_max" value="3.14"/>
+        <param name="angle_increment" value="0.0065083"/>
+        <param name="scan_time" value="0.0"/>
+        <param name="range_min" value="0.06"/>
+        <param name="range_max" value="4.1"/>
+    </node>
+
+    <!-- Map server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find amr_gazebo)/maps/maze_s.yaml"/>
+    
+    <!-- AMCL -->
+    <include file="$(find amr_gazebo)/launch/includes/follower_amcl.xml">
+        <arg name="init_x" value="$(arg init_x)"/>
+        <arg name="init_y" value="$(arg init_y)"/>
+        <arg name="init_a" value="$(arg init_a)"/>
+    </include>
+
+    <!-- Run the costmap node -->
+    <node name="costmap_node" pkg="costmap_2d" type="costmap_2d_node" >
+  	  	<rosparam file="$(find amr_gazebo)/params/move_base_dwa/follower_common_params.yaml" command="load" ns="global_costmap" />
+  	 	<rosparam file="$(find amr_gazebo)/params/move_base_dwa/follower_common_params.yaml" command="load" ns="local_costmap" />
+  		<rosparam file="$(find amr_gazebo)/params/move_base_dwa/follower_global_params.yaml" command="load" />
+  		<rosparam file="$(find amr_gazebo)/params/move_base_dwa/follower_local_params.yaml" command="load" />
+    </node>
+
+    <!-- Rviz -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/follower_costmap.rviz" if="$(arg use_rviz)" />
+
+</launch>

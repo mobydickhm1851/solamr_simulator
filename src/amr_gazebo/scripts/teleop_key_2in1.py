@@ -97,7 +97,7 @@ class RosTeleop:
         self.locker_dir = 0  # Locking direction, 1 = CW, -1 = CCW
         self.locker_state = False
         self.blocker_init = False
-        self.vel_pub = rospy.Publisher('/2in1/cmd_vel{0}'.format(self.robot_ns), Twist, queue_size=5)
+        self.vel_pub = rospy.Publisher('/cmd_vel{0}'.format(self.robot_ns), Twist, queue_size=5)
         self.blocker_pub = rospy.Publisher('/{0}/blocker_position_controller/command'.format(self.robot_ns), Float64, queue_size=5)
         self.locker_sub = rospy.Subscriber("/{0}/blocker_position_controller/state".format(self.robot_ns), JointControllerState, self.lockerAngleUpdate )
 
