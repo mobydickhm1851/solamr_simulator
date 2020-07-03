@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<launch>
+    <arg name="use_rviz" default="true" /> 
+
+    <node name="path_gen" pkg="linked_diff_drive" type="path_gen.py" output="screen" />
+    <node name="marker_gen" pkg="linked_diff_drive" type="linked_drive_follower.py" output="screen"/>
+    
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find linked_diff_drive)/rviz/linked_diff_drive.rviz" if="$(arg use_rviz)" />
+
+</launch>
