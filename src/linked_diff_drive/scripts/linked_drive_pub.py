@@ -15,8 +15,8 @@ from geometry_msgs.msg import PoseStamped, Twist
 
 class LinkedDrive:
 
-    def __init__(self, rot_vel_max=2.5718, # In rad/s
-                       lin_vel_max=3.0, # In m/s
+    def __init__(self, rot_vel_max=3.5718, # In rad/s
+                       lin_vel_max=5.0, # In m/s
                        rot_acc=3.0, lin_acc=3.0): # in rad/s^2 and m/s^2
 
         ''' Optimization Ratios '''
@@ -25,6 +25,7 @@ class LinkedDrive:
         ''' Shared params '''
         self.dt = 0.3 # sec
         self.L = 1.0 # dist between two solamr when connected with shelft
+        self.DIST_ERR = 0.05
         self.ANG_RES = 0.01
 
         ''' variables of FRONT car '''
@@ -150,7 +151,7 @@ class LinkedDrive:
 
 #            print("pose={0}; v and w={1}; check_result={2}; dxdy={3}".format(pose, [v,w], self.check_vels_range([v,w]), [dx,dy]))
             temp_pose = self.pose_update(self.cur_pose, [v,w], self.cur_th)[:2]
-            if self.check_vels_range([v, w]) and self.dist2pose(temp_pose, pose) < 0.0001: 
+            if self.check_vels_range([v, w]) and self.dist2pose(temp_pose, pose) < 0.01: 
                 dict_reachable[tuple(pose)] = [v, w]
 
         return dict_reachable
@@ -183,7 +184,7 @@ class LinkedDrive:
         theta_goal = atan2(y_diff, x_diff)
         return  (theta_goal - self.cur_th)
 
-    def angularVel(self, point, RATE=0.5, backward=True):
+    def angularVel(self, point, RATE_ang=0.5, backward=True):
         THETA_TOL = 0.0175  # in radian ~= 2 deg
         MAX_OMEGA = self.ROT_VEL[1]
         MIN_OMEGA = 0.1
@@ -192,25 +193,41 @@ class LinkedDrive:
 #        theta_diff -= PI/8
         ang_temp = 0.0000000001
         ''' prevent oscilliation '''
-        if abs(theta_diff) < THETA_TOL*2 : RATE*=0.3
-        elif abs(theta_diff) < THETA_TOL*11 : RATE*=0.5
+        if abs(theta_diff) < THETA_TOL*2 : RATE_ang*=0.3
+        elif abs(theta_diff) < THETA_TOL*11 : RATE_ang*=0.5
         ''' turn CW or CCW '''
         if theta_diff > 0:
             if theta_diff > PI: 
-                ang_temp =  - RATE * exp(2*PI - theta_diff) 
+                ang_temp =  - RATE_ang * exp(2*PI - theta_diff) 
             else : 
-                ang_temp =  RATE * exp(theta_diff)
+                ang_temp =  RATE_ang * exp(theta_diff)
         if theta_diff < 0:
             if abs(theta_diff) > PI: 
-                ang_temp = RATE * exp(2*PI + theta_diff) 
+                ang_temp = RATE_ang * exp(2*PI + theta_diff) 
             else : 
-                ang_temp = - RATE * exp(- theta_diff)
+                ang_temp = - RATE_ang * exp(- theta_diff)
         if abs(ang_temp) >= MAX_OMEGA: ang_temp = MAX_OMEGA * abs(ang_temp)/ang_temp
 #        elif abs(ang_temp) <= MIN_OMEGA: ang_temp = MIN_OMEGA * abs(ang_temp)/ang_temp
         return ang_temp
+    
+    def faceSameDir(self, goal):
+        ''' Decide to drive forward or backward '''
+        if abs(self.pointAngularDiff(goal)) < PI/2 or abs(self.pointAngularDiff(goal)) > PI*3/2 : 
+            return True # same dir, drive forward
+        else : return False # opposite dir, drive reverse
 
     def dist2pose(self, pose1, pose2):
         return np.sqrt(sum((np.array(pose1) - np.array(pose2))**2))
+
+    def linearVel(self, goal, RATE_lin=0.5):
+        dist = self.dist2pose(self.cur_pose, goal)
+        if self.faceSameDir(goal) : 
+            vel_temp = RATE_lin * log(dist+1)
+        elif not self.faceSameDir(goal) : 
+            vel_temp = - RATE_lin * log(dist+1)
+        ''' MIN and MAX '''
+        if abs(vel_temp) >= self.LIN_VEL[1]: vel_temp = self.LIN_VEL[1] * abs(vel_temp)/vel_temp
+        return vel_temp
 
     def rate_dist(self, target_pose):
         ''' rate the distance between front and follower (closer the lower) '''
@@ -245,11 +262,21 @@ class LinkedDrive:
 #            print(sorted(dict_cost.items(), key=lambda item: item[1][0], reverse=False)[0]  )
 #            print(vels)
             return eval(vels)
+        
         else :
+            dist2front = self.dist2pose(self.front_pose, self.cur_pose)
             ''' facing toward front car '''
             ang_vel = self.angularVel(self.front_pose)
-#            print("No rechable pose exists.")
-            return [0.0, ang_vel]
+            ''' go straight to 1m away from front vehicle if there is no available vels '''
+            lin_vel = self.linearVel(self.front_pose)
+
+            if abs(dist2front - self.L) < self.DIST_ERR:
+                lin_vel = 0.0
+
+            elif dist2front < self.L:
+                lin_vel = -lin_vel
+
+            return [lin_vel, ang_vel]
 
 
 

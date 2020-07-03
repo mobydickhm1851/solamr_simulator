@@ -29,6 +29,7 @@ black = '#000000'
 fig = plt.figure()
 ax = plt.subplot(111)
 #ax = plt.axes(xlim=(0, 4), ylim=(-2, 2))
+time_text = ax.text(28, .85, '', fontsize=15)
 x, y = 0, 0
 scat_x = ax.scatter(x, y, s=10, vmin=0, vmax=1,
                     c='r', edgecolor="k", label="x pose")
@@ -36,7 +37,7 @@ scat_x = ax.scatter(x, y, s=10, vmin=0, vmax=1,
 front_pose = [0.0, 0.0] # [x, y]
 cur_pose = [0.0, 0.0] # [x, y]
 
-lst_error = []
+lst_error = [[0.0,0.0]]
 t0 = time.time()
 
 def dist2pose(pose1, pose2):
@@ -63,8 +64,8 @@ def init():
     ax.set_title("Estimated Linked Drive Error", fontsize=18)
     ax.set_xlabel('Time (s)')
     ax.set_ylabel('Distance between SOLamrs (m)')
-    ax.set_xlim([0, 100])
-    ax.set_ylim([0, 2])
+    ax.set_xlim([0, 120])
+    ax.set_ylim([0.8, 1.2])
     return scat_x,
 
 def animate(i):
@@ -72,8 +73,12 @@ def animate(i):
     x = time.time() - t0
     y = dist2pose(front_pose, cur_pose)
     lst_error.append([x, y])
+    lst_error.sort(key=lambda s:s[1], reverse=True)
+    max_error= lst_error[0]
+
     scat_x.set_offsets(lst_error)
-    return scat_x,
+    time_text.set_text("Max. Error: {0}".format([round(max_error[0], 2), round(max_error[1], 4)]))
+    return scat_x, time_text,
 
 ''' ROS node '''
 rospy.init_node("Plot_Error", anonymous=True)

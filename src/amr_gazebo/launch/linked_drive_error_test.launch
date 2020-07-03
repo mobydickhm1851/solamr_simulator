@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<launch>
+  <arg name="use_joy" default="false" /> 
+
+<!-- Linked Drive -->
+    <node pkg="linked_diff_drive" type="linked_drive_pub.py" name="linked_drive_node" output="screen"/>
+
+<!-- Follower Error Plot -->
+    <node pkg="amr_gazebo" type="linked_drive_error.py" name="error_plot_node" output="screen"/>
+
+<!-- Keyboard Teleop -->
+    <node pkg="amr_gazebo" type="teleop_key.py" name="solamr_teleop" output="screen" unless="$(arg use_joy)"/>
+
+<!-- Joy Stick Teleop -->
+    <node pkg="joy" type="joy_node" name="solamr_1_joy_node" if="$(arg use_joy)">
+        <param name="dev" type="string" value="/dev/input/js0" />
+        <remap from="/joy" to="/solamr_1/joy" />
+	    <param name="deadzone" value="0.0" />
+	    <param name="autorepeat_rate" value="130" />
+    </node>
+
+</launch>

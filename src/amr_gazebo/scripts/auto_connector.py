@@ -131,7 +131,6 @@ class AutoConnect:
             if abs(theta_diff) <= self.THETA_TOL: return True
             else: return False
 
-
     def euclideanDist(self, goal):
         return sqrt((goal.x - self.pose_now.x)**2 + (goal.y - self.pose_now.y)**2)
 
