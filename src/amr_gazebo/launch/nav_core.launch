@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 
 <launch>
+    <!-- Linked Drive -->
+    <node pkg="linked_diff_drive" type="linked_drive_pub.py" name="linked_drive_node" output="screen"/>
+
+    <!-- Follower Error Plot -->
+    <node pkg="amr_gazebo" type="linked_drive_error.py" name="error_plot_node" output="screen"/>
+
     <!-- merge scans for amcl in *_2in1.launch-->
     <node pkg="ira_laser_tools" name="laserscan_multi_merger" type="laserscan_multi_merger" output="screen">
         <param name="destination_frame" value="solamr_1/base_footprint"/>
