@@ -80,6 +80,8 @@ Linked Drive Controller controls the cmd_vel of follower SOLamr.
       - Linked Drive Controller (following vehicle)
       - Error estimation (pyplot animation)
 
+For more detailed explanation and insight for Linked Drive Controller, please see [Linked Drive Controller note](https://hackmd.io/7LaMkuFtQnqDLp_9-IAt6w?both)
+
 ### factory environment
 To employ the factory-like environment, add the following argument while launching Gazebo `empty_world.launch`
 
