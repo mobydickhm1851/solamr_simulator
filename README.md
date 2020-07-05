@@ -3,7 +3,7 @@ This package is aimed to develope SOLamr in Gazebo with the following feature :
 
 1. [Auto Connector](https://hackmd.io/i2IS9tFnQKqGmrkJv2_ePQ)  
 2. [Shelft Finder](./src/solamr_pkgs/src/ObjectRecognition.md)
-3. Navigation
+3. Linked Drive controller (Right below)
 
 ## Simulation Environment
 ### Large shelft (XL)
@@ -43,7 +43,42 @@ To launch only two SOLamr, simply
 ```
 roslaunch amr_gazebo solamr_only.launch
 ```
+This launch is also suggessted to use if testing Linked Drive Controller
 
+### Linked Drive Controller
+Linked Drive Controller controls the cmd_vel of follower SOLamr. 
+
+- To test Linked Drive Controller in rviz, launch :
+   ```
+   roslaunch linked_diff_drive linked_drive_demo.launch
+   ```
+   Arrows representing leading and following SOLamr will be shown in rviz.
+   | ![](https://i.imgur.com/40wr3Gp.gif) | red box:<br>Reachable poses<br>selected from<br>potential poses| 
+   | -------- | -------- |
+
+- To impelement Linked Drive Controller in Gazebo, launch : 
+   ```
+   roslaunch amr_gazebo solamr_only.launch
+   ```
+   To spawn two SOLamr, one as leading vehicle, one as following vehicle.
+   Leading vehicle can be controlled in the following two ways:
+   1. Controlling using keyboard (teleop_key.py)
+      ```
+      roslaunch amr_gazebo linked_drive_error_test.launch
+      ```
+      This launch file will initiate these 3 nodes (mecel. not listed):
+      - Keyboard teleop (leading vehicle)
+      - Linked Drive Controller (following vehicle)
+      - Error estimation (pyplot animation)
+      
+   2. Controlling using DWA
+      ```
+      roslaunch amr_gazebo nav_core.launch
+      ```
+      This launch file will initiate these nodes (mecel. not listed):
+      - Move base (leading vehicle : Global planner / DWA local planner)
+      - Linked Drive Controller (following vehicle)
+      - Error estimation (pyplot animation)
 
 ### factory environment
 To employ the factory-like environment, add the following argument while launching Gazebo `empty_world.launch`
