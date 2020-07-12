@@ -197,17 +197,13 @@
 
 -->
 
-  <gazebo reference="camera_rgb_frame">
+  <!-- <gazebo reference="camera_rgb_frame">
     <sensor type="depth" name="realsense_R200">
       <always_on>true</always_on>
       <visualize>$(arg camera_visual)</visualize>
       <camera>
           <horizontal_fov>1.3439</horizontal_fov>
           <image>
-              <!--
-              <width>1280</width>
-              <height>720</height>
--->
               <width>640</width>
               <height>480</height>
               <format>R8G8B8</format>
@@ -243,6 +239,6 @@
         <hackBaseline>0</hackBaseline>
       </plugin>
     </sensor>
-  </gazebo>
+  </gazebo> -->
 
 </robot>

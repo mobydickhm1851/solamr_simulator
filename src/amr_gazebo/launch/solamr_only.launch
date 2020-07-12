@@ -66,6 +66,10 @@
         </include>
     </group>
 
+    <!-- # tf_static_br -->
+    <node pkg="tf" type="static_transform_publisher" name="static_br_1" args="0 0 0 0 0 0 1 map /solamr_1/odom 30" />
+    <node pkg="tf" type="static_transform_publisher" name="static_br_2" args="0 0 0 0 0 0 1 map /solamr_2/odom 30" />
+
     <!-- # rviz -->
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find amr_gazebo)/rviz/single_solamr.rviz" if="$(arg use_rviz)" />
 

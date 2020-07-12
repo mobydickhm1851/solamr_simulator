@@ -1,6 +1,5 @@
 #! /usr/bin/env python
 
-# Generate random path for diff drive
 from math import atan2, exp, sqrt, log
 from math import pi as PI
 import numpy as np
@@ -11,244 +10,284 @@ import rospy
 import tf.transformations as t
 from nav_msgs.msg import Path, Odometry
 from geometry_msgs.msg import PoseStamped, Twist
+
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
 
+
 class LinkedDrive:
+    """
+    Description:
 
-    def __init__(self, rot_vel_max=3.5718, # In rad/s
-                       lin_vel_max=5.0, # In m/s
-                       rot_acc=3.0, lin_acc=3.0): # in rad/s^2 and m/s^2
+    Attributes:
+        ratio_dist (float): Optimization Ratios
+        dt (float):
+        L (float): distance between two solamr when connected with shelft
+        dist_error (float):
+        angle_resolution (float):
+        rot_vel_max (float):
+        lin_vel_max (float):
+        rot_acc (float):
+        lin_acc (float):
+    """
+    def __init__(self):
+        self.ratio_dist = 1.0
+        self.dt = 0.3  # sec
+        self.L = 1.0  # m
+        self.dist_error = 0.05
+        self.angle_resolution = 0.01
+        self.rot_vel_max = 3.5718  # rad/s
+        self.lin_vel_max = 5.0  # m/s
+        self.rot_acc = 3.0  # rad/s^2
+        self.lin_acc = 3.0  # m/s^2
 
-        ''' Optimization Ratios '''
-        self.RATIO_DIST = 1.0
-
-        ''' Shared params '''
-        self.dt = 0.3 # sec
-        self.L = 1.0 # dist between two solamr when connected with shelft
-        self.DIST_ERR = 0.05
-        self.ANG_RES = 0.01
-
-        ''' variables of FRONT car '''
-        self.RATE = 10
-        self.front_pose = [0.0, 0.0] # [x, y]
-        self.front_ori = [0.0, 0.0, 0.0, 0.0] # [x, y, z, w]
-        self.front_th = 0.0
-        self.front_vel = [0.0, 0.0]  # [v_linear, w_angular]
-        self.front_predict_vel = [0.0, 0.0]  # [v_linear, w_angular]
-
-        ''' variables and params of REAR car '''
-        self.INIT_X = - self.L
-        self.INIT_Y = 0.0
-        self.cur_pose = [self.INIT_X, self.INIT_Y] # [x, y]
-        self.cur_vel = [0.0, 0.0] # [lin, ang]
-        self.cur_ori = [0.0, 0.0, 0.0, 0.0] # [x, y, z, w]
-        self.cur_th = 0.0
-        self.ROT_VEL = [-rot_vel_max, rot_vel_max]
-        self.LIN_VEL = [-lin_vel_max, lin_vel_max]
-        self.ROT_ACC = [-rot_acc, rot_acc]
-        self.LIN_ACC = [-lin_acc, lin_acc]
-
-        ''' ROS node '''
-        self.f_sub_1 = rospy.Subscriber("/solamr_1/odom", Odometry, self.f_pose_update)
-        self.f_sub_2 = rospy.Subscriber("/solamr_1/cmd_vel", Twist, self.fp_vel_update)
-        self.r_sub_1 = rospy.Subscriber("/solamr_2/odom", Odometry, self.r_pose_update)
-        self.r_vel_pub = rospy.Publisher('/solamr_2/cmd_vel', Twist, queue_size=10)
-
-    def fp_vel_update(self, data):
-        self.front_predict_vel[0] = data.linear.x
-        self.front_predict_vel[1] = data.angular.z
-
-    def f_pose_update(self, data):
-        ''' update x, y coordinate '''
-        self.front_pose[0] = data.pose.pose.position.x
-        self.front_pose[1] = data.pose.pose.position.y
-
-        ''' update vels '''
-        self.front_vel[0] = data.twist.twist.linear.x
-        self.front_vel[1] = data.twist.twist.angular.z
-
-        ''' update quaternion '''
-        self.front_ori[0] = data.pose.pose.orientation.x
-        self.front_ori[1] = data.pose.pose.orientation.y
-        self.front_ori[2] = data.pose.pose.orientation.z
-        self.front_ori[3] = data.pose.pose.orientation.w
-
-        (row, pitch, self.front_th) = t.euler_from_quaternion(self.front_ori)
-
-    def r_pose_update(self, data):
-        ''' update x, y coordinate '''
-        self.cur_pose[0] = data.pose.pose.position.x
-        self.cur_pose[1] = data.pose.pose.position.y
-
-        ''' update quaternion '''
-        self.cur_ori[0] = data.pose.pose.orientation.x
-        self.cur_ori[1] = data.pose.pose.orientation.y
-        self.cur_ori[2] = data.pose.pose.orientation.z
-        self.cur_ori[3] = data.pose.pose.orientation.w
-
-        (row, pitch, self.cur_th) = t.euler_from_quaternion(self.cur_ori)
-
-    def pose_update(self, pose, vel, th0):
-        ''' prediction of front car's trajectory using arc (combination of v and w) '''
-        ''' front car state 0 '''
+    def get_predict_pose(self, pose, vel, th0):
+        '''
+        Description:
+            prediction of trajectory using arc (combination of v and w)
+        Args:
+            pose (list):
+            vel (list):
+            th0 (float):
+        Return:
+            (tuple): x1, y1, th1
+        '''
         x0 = pose[0]
         y0 = pose[1]
-        ''' radius of the arc : r > 0, arc on the left; r < 0, arc on the right'''
-        omega = vel[1]
-        if omega == 0:
-            r = 0
-            d_x = vel[0] * self.dt * np.cos(th0)
-            d_y = vel[0] * self.dt * np.sin(th0)
-        else:
-            r = vel[0] / omega
-            ''' pose of end of arc before rotation '''
-            d_x = r * np.sin(omega * self.dt)
-            d_y = r - r * np.cos(omega * self.dt)
-#        print("d_x, d_y in predict={0}".format([d_x, d_y]))
-        ''' rotate for the theta '''
-        PI = np.pi
-        rot_mat = np.array([[np.cos(th0), - np.sin(th0)],
-                            [np.sin(th0), np.cos(th0)]])
-        [[x1], [y1]] = [[x0], [y0]] + np.dot(rot_mat, [[d_x], [d_y]])
-        th1 = th0 + omega * self.dt
-#        print("\ncurrent : {0}".format([f_x_0, f_y_0]))
-#        print("\ncurrent vel : {0}".format(self.front_vel))
-#        print("\npredicted : {0}".format([f_x_1, f_y_1]))
+        v = vel[0]
+        w = vel[1]
 
-        return [x1, y1, th1]
+        if abs(w) < 1e-5:
+            dx = v * self.dt
+            dy = 0.0
+            dth = 0.0
+        else:
+            r = abs(v / w)
+            dth = w * self.dt
+            dx = abs(r * np.sin(dth))
+            dx = dx if v > 0 else -dx
+            dy = r * (1.0 - np.cos(dth))
+
+        rot_mat = np.array([[np.cos(th0), -np.sin(th0)], [np.sin(th0), np.cos(th0)]])
+        [[x1], [y1]] = [[x0], [y0]] + np.dot(rot_mat, [[dx], [dy]])
+        th1 = th0 + dth
+
+        return x1, y1, th1
 
     def get_potential_poses(self):
-        ''' return potential locations (poses) for follower to be at '''
-        res = self.ANG_RES # rad, potential poses every __ rad
-        ''' get predicted front pose from front's current vels'''
-        [x, y] = self.pose_update(self.front_pose, self.front_vel, self.front_th)[:2]
-#        ''' get predicted front pose from front's predicted vels'''
-#        [x, y] = self.pose_update(self.front_pose, self.front_predict_vel, self.front_th)[:2]
-        lst_rad = np.arange(0, 2 * np.pi, res)
-#        print("potential poses = {0}".format(len(lst_rad)))
-        lst_poses = []
-        for th in lst_rad:
-            lst_poses.append([x + self.L * np.cos(th), y + self.L * np.sin(th)])
-        m_arr = get_marker_array(lst_poses)
+        '''
+        Description:
+            get potential locations (poses) for follower to be at
+        Return:
+            (list):
+        '''
+        # -- get predicted front pose
+        x, y, _ = self.get_predict_pose(FRONT_POSE, FRONT_VEL, FRONT_TH)  # from front's current vels
+        # x, y, _ = self.get_predict_pose(FRONT_POSE, FRONT_CMD_VEL, FRONT_TH)  # from front's predicted vels
+
+        list_rad = np.arange(0, 2.0*PI, self.angle_resolution) # rad, potential poses every __ rad
+        # print("potential poses = {0}".format(len(lst_rad)))
+        list_poses = []
+
+        for th in list_rad:
+            list_poses.append([x + self.L * np.cos(th), y + self.L * np.sin(th)])
+
+        m_arr = get_marker_array(list_poses)
         PUB_MARKER_ARRAY.publish(m_arr)
-        return lst_poses
+
+        return list_poses
 
     def vels_from_pose(self, poses):
-        ''' return lin/ang velocities from given pose '''
+        '''
+        Description:
+            get lin/ang velocities from given pose
+        Args:
+            poses (list):
+        Return:
+            (dict):
+        '''
         dict_reachable = dict()
-        mat_rot_inv = np.array([ [np.cos(self.cur_th), np.sin(self.cur_th)],
-                                 [-np.sin(self.cur_th), np.cos(self.cur_th)] ])
+        mat_rot_inv = np.array([[np.cos(CUR_TH), np.sin(CUR_TH)], [-np.sin(CUR_TH), np.cos(CUR_TH)]])
 
         for pose in poses:
-            [[dx], [dy]] = np.dot(mat_rot_inv, np.array([[pose[0]-self.cur_pose[0]],
-                                                         [pose[1]-self.cur_pose[1]]]))
+            [[dx], [dy]] = np.dot(mat_rot_inv, np.array([[pose[0]-CUR_POSE[0]], [pose[1]-CUR_POSE[1]]]))
+
             if dy == 0: # only lin_vel, no rotation
                 w = 0.0
                 v = dx / self.dt
             else:
                 r = (dx**2 + dy**2) / (2.0*dy)
-                ''' w = omega and v = vel.x '''
-                w = np.arcsin(dx /np.array(r)) / self.dt # 1x2 mat
+                # -- w = omega and v = vel.x
+                w = np.arcsin(dx / np.array(r)) / self.dt # 1x2 mat
                 v = np.array(r) * np.array(w)
 
-#            print("pose={0}; v and w={1}; check_result={2}; dxdy={3}".format(pose, [v,w], self.check_vels_range([v,w]), [dx,dy]))
-            temp_pose = self.pose_update(self.cur_pose, [v,w], self.cur_th)[:2]
-            if self.check_vels_range([v, w]) and self.dist2pose(temp_pose, pose) < 0.01:
+            # print("pose={0}; v and w={1}; check_result={2}; dxdy={3}".format(pose, [v,w], self.check_vels_range([v,w]), [dx,dy]))
+            cur_x1, cur_y1, _ = self.get_predict_pose(CUR_POSE, (v,w), CUR_TH)
+
+            if self.check_vels_range((v, w)) and get_dist_from_two_poses((cur_x1, cur_y1), pose) < 0.01:
                 dict_reachable[tuple(pose)] = [v, w]
 
         return dict_reachable
 
     def check_vels_range(self, vels):
-        ''' check if the [v, w] is within the bounds '''
+        '''
+        Description:
+            check if the [v, w] is within the bounds
+        Args:
+            vels (tuple): v, w
+        Return:
+            (bool):
+        '''
         v1, w1 = vels
-        v0, w0 = self.cur_vel
-        av, aw = (np.array(vels) - np.array(self.cur_vel)) / self.dt
-        flag = 0
-        if v1 < self.LIN_VEL[0] or v1 > self.LIN_VEL[1]:
-#            print("linear velocity exceeds the range!!")
-            flag += 1
-        if w1 < self.ROT_VEL[0] or w1 > self.ROT_VEL[1]:
-#            print("angular velocity exceeds the range!!")
-            flag += 1
-        if av < self.LIN_ACC[0] or av > self.LIN_ACC[1]:
-#            print("linear acceleration exceeds the range!!")
-            flag += 1
-        if aw < self.ROT_ACC[0] or aw > self.ROT_ACC[1]:
-#            print("angular acceleration exceeds the range!!")
-            flag += 1
+        v0, w0 = CUR_VEL
+        av, aw = (np.array(vels) - np.array(CUR_VEL)) / self.dt
 
-        if flag == 0: return True
-        else: return False
+        if abs(v1) > self.lin_vel_max:
+            return False
+        if abs(w1) > self.rot_vel_max:
+            return False
+        if abs(av) > self.lin_acc:
+            return False
+        if abs(aw) > self.rot_acc:
+            return False
+
+        return True
 
     def pointAngularDiff(self, goal):
-        x_diff = goal[0] - self.cur_pose[0]
-        y_diff = goal[1] - self.cur_pose[1]
-        theta_goal = atan2(y_diff, x_diff)
-        return  (theta_goal - self.cur_th)
+        '''
+        Description:
 
-    def angularVel(self, point, RATE_ang=0.5, backward=True):
-        THETA_TOL = 0.0175  # in radian ~= 2 deg
-        MAX_OMEGA = self.ROT_VEL[1]
-        MIN_OMEGA = 0.1
+        Args:
+            goal (list):
+        Return:
+            (float)
+        '''
+        x_diff = goal[0] - CUR_POSE[0]
+        y_diff = goal[1] - CUR_POSE[1]
+        theta_goal = atan2(y_diff, x_diff)
+        return theta_goal - CUR_TH
+
+    def angularVel(self, point, rate_ang=0.5, backward=True):
+        '''
+        Description:
+
+        Args:
+            point (?):
+            rate_ang (float):
+            backward (bool):
+        Return:
+            (float):
+        '''
+        theta_tol = 0.0175  # in radian ~= 2 deg
+        max_omega = self.rot_vel_max
+        min_omega = 0.1
         theta_diff = self.pointAngularDiff(point)
-        ''' TEST: see if this can follow better '''
-#        theta_diff -= PI/8
+
+        # -- TEST: see if this can follow better
+        # theta_diff -= PI/8
         ang_temp = 0.0000000001
-        ''' prevent oscilliation '''
-        if abs(theta_diff) < THETA_TOL*2 : RATE_ang*=0.3
-        elif abs(theta_diff) < THETA_TOL*11 : RATE_ang*=0.5
-        ''' turn CW or CCW '''
+
+        # -- prevent oscilliation
+        if abs(theta_diff) < theta_tol*2:
+            rate_ang *= 0.3
+        elif abs(theta_diff) < theta_tol*11:
+            rate_ang*=0.5
+        else:
+            pass
+
+        # -- turn CW or CCW
         if theta_diff > 0:
             if theta_diff > PI:
-                ang_temp =  - RATE_ang * exp(2*PI - theta_diff)
+                ang_temp =  - rate_ang * exp(2*PI - theta_diff)
             else :
-                ang_temp =  RATE_ang * exp(theta_diff)
+                ang_temp =  rate_ang * exp(theta_diff)
+
         if theta_diff < 0:
             if abs(theta_diff) > PI:
-                ang_temp = RATE_ang * exp(2*PI + theta_diff)
+                ang_temp = rate_ang * exp(2*PI + theta_diff)
             else :
-                ang_temp = - RATE_ang * exp(- theta_diff)
-        if abs(ang_temp) >= MAX_OMEGA: ang_temp = MAX_OMEGA * abs(ang_temp)/ang_temp
-#        elif abs(ang_temp) <= MIN_OMEGA: ang_temp = MIN_OMEGA * abs(ang_temp)/ang_temp
+                ang_temp = - rate_ang * exp(- theta_diff)
+
+        if abs(ang_temp) >= max_omega:
+            ang_temp = max_omega * abs(ang_temp)/ang_temp
+        # elif abs(ang_temp) <= min_omega:
+        #     ang_temp = min_omega * abs(ang_temp)/ang_temp
+        # else:
+        #     pass
+
         return ang_temp
 
     def faceSameDir(self, goal):
-        ''' Decide to drive forward or backward '''
-        if abs(self.pointAngularDiff(goal)) < PI/2 or abs(self.pointAngularDiff(goal)) > PI*3/2 :
+        '''
+        Description:
+            Decide to drive forward or backward
+        Args:
+            goal (?):
+        Return:
+            (bool):
+        '''
+        if abs(self.pointAngularDiff(goal)) < PI/2.0 or abs(self.pointAngularDiff(goal)) > PI*3.0/2.0 :
             return True # same dir, drive forward
-        else : return False # opposite dir, drive reverse
+        else:
+            return False # opposite dir, drive reverse
 
-    def dist2pose(self, pose1, pose2):
-        return np.sqrt(sum((np.array(pose1) - np.array(pose2))**2))
+    def linearVel(self, goal, rate_lin=0.5):
+        '''
+        Description:
 
-    def linearVel(self, goal, RATE_lin=0.5):
-        dist = self.dist2pose(self.cur_pose, goal)
+        Args:
+            goal (?):
+            rate_lin (float):
+        Return:
+            (float):
+        '''
+        dist = get_dist_from_two_poses(CUR_POSE, goal)
+
         if self.faceSameDir(goal) :
-            vel_temp = RATE_lin * log(dist+1)
+            vel_temp = rate_lin * log(dist+1)
         elif not self.faceSameDir(goal) :
-            vel_temp = - RATE_lin * log(dist+1)
-        ''' MIN and MAX '''
-        if abs(vel_temp) >= self.LIN_VEL[1]: vel_temp = self.LIN_VEL[1] * abs(vel_temp)/vel_temp
+            vel_temp = - rate_lin * log(dist+1)
+        # -- MIN and MAX
+        if abs(vel_temp) >= self.lin_vel_max:
+            vel_temp = self.lin_vel_max * abs(vel_temp)/vel_temp
+
         return vel_temp
 
     def rate_dist(self, target_pose):
-        ''' rate the distance between front and follower (closer the lower) '''
-        r_d = self.RATIO_DIST
-        follower_pose = self.cur_pose
-        return r_d * self.dist2pose(follower_pose, target_pose)
+        '''
+        Description:
+            rate the distance between front and follower (closer the lower)
+        Args:
+            target_pose (?):
+        Return:
+            (float):
+        '''
+        r_d = self.ratio_dist
+        follower_pose = CUR_POSE
+        return r_d * get_dist_from_two_poses(follower_pose, target_pose)
 
     def rate_ori(self, target_pose, mode="shelft"):
-        ''' rate the orientation, standatd: 1.shelft orientation, 2.front car orientation '''
+        '''
+        Description:
+            rate the orientation, standatd: 1.shelft orientation, 2.front car orientation
+        Args:
+            target_pose (?):
+            mode (str):
+        Return:
+            (float)
+        '''
+        # -- 1.rate by shelft orientation
 
-        ''' 1.rate by shelft orientation '''
-
-        ''' 2.rate by front car orientation '''
-
+        # -- 2.rate by front car orientation
         pass
 
-    def pose_optimization(self):
-        ''' return optimized pose from reachable poses '''
+    def get_opt_rear_vels(self):
+        '''
+        Description:
+            get optimized linear and rotation velocity from reachable poses
+        Return:
+            (tuple):
+        '''
         potential_poses = self.get_potential_poses()
         dict_reachable = self.vels_from_pose(potential_poses)
         reachable_poses = dict_reachable.keys()
@@ -256,32 +295,103 @@ class LinkedDrive:
 
         if len(reachable_poses) > 0:
             dict_cost = dict()
-            ''' optimization according to : dist to target, face same direction as front'''
+            # -- optimization according to : dist to target, face same direction as front
             for p, v in dict_reachable.items():
-                ''' 1. dist to target (initiallizing the dict) '''
+                # -- 1. dist to target (initiallizing the dict)
                 dict_cost[str(v)] = [self.rate_dist(p)]
 
             vels, cost = sorted(dict_cost.items(), key=lambda item: item[1][0], reverse=False)[0]
-#            print(sorted(dict_cost.items(), key=lambda item: item[1][0], reverse=False)[0]  )
-#            print(vels)
+            # print(sorted(dict_cost.items(), key=lambda item: item[1][0], reverse=False)[0]  )
+            # print(vels)
             return eval(vels)
 
         else :
-            dist2front = self.dist2pose(self.front_pose, self.cur_pose)
-            ''' facing toward front car '''
-            ang_vel = self.angularVel(self.front_pose)
-            ''' go straight to 1m away from front vehicle if there is no available vels '''
-            lin_vel = self.linearVel(self.front_pose)
+            dist2front = get_dist_from_two_poses(FRONT_POSE, CUR_POSE)
 
-            if abs(dist2front - self.L) < self.DIST_ERR:
+            # -- facing toward front car
+            ang_vel = self.angularVel(FRONT_POSE)
+
+            # -- go straight to 1m away from front vehicle if there is no available vels
+            lin_vel = self.linearVel(FRONT_POSE)
+
+            if abs(dist2front - self.L) < self.dist_error:
                 lin_vel = 0.0
-
             elif dist2front < self.L:
                 lin_vel = -lin_vel
+            else:
+                pass
 
-            return [lin_vel, ang_vel]
+            return (lin_vel, ang_vel)
+
+
+# --
+
+def get_dist_from_two_poses(pose1, pose2):
+    '''
+    Description:
+        get distance between two pose
+    Args:
+        pose1 (?):
+        pose2 (?):
+    Return:
+        (float):
+    '''
+    return np.sqrt(sum((np.array(pose1) - np.array(pose2))**2))
+
+def _cb_fp_cmdvel(data):
+    """
+    Descriptions:
+        callback for rospy.Subscriber /solamr_1/cmd_vel
+    """
+    global FRONT_CMD_VEL
+
+    FRONT_CMD_VEL[0] = data.linear.x
+    FRONT_CMD_VEL[1] = data.angular.z
+
+def _cb_f_pose(data):
+    """
+    Descriptions:
+        callback for rospy.Subscriber /solamr_1/odom
+    """
+    global FRONT_POSE, FRONT_VEL, FRONT_ORI, FRONT_TH
+
+    FRONT_POSE[0] = data.pose.pose.position.x
+    FRONT_POSE[1] = data.pose.pose.position.y
+
+    FRONT_VEL[0] = data.twist.twist.linear.x
+    FRONT_VEL[1] = data.twist.twist.angular.z
+
+    FRONT_ORI[0] = data.pose.pose.orientation.x
+    FRONT_ORI[1] = data.pose.pose.orientation.y
+    FRONT_ORI[2] = data.pose.pose.orientation.z
+    FRONT_ORI[3] = data.pose.pose.orientation.w
+
+    _, _, FRONT_TH = t.euler_from_quaternion(FRONT_ORI)
+
+def _cb_r_pose(data):
+    """
+    Descriptions:
+        callback for rospy.Subscriber /solamr_2/odom
+    """
+    global CUR_POSE, CUR_ORI, CUR_TH
+
+    CUR_POSE[0] = data.pose.pose.position.x
+    CUR_POSE[1] = data.pose.pose.position.y
+
+    CUR_ORI[0] = data.pose.pose.orientation.x
+    CUR_ORI[1] = data.pose.pose.orientation.y
+    CUR_ORI[2] = data.pose.pose.orientation.z
+    CUR_ORI[3] = data.pose.pose.orientation.w
+
+    _, _, CUR_TH = t.euler_from_quaternion(CUR_ORI)
 
 def get_marker_points():
+    """
+    Descritions:
+
+    Return:
+        (Marker):
+    """
     m = Marker()
     m.header.frame_id = "/solamr_1/odom"
     m.header.stamp = rospy.Time.now()
@@ -297,47 +407,67 @@ def get_marker_points():
     return m
 
 def get_marker_array(locs):
+    """
+    Descritions:
+
+    Args:
+        locs (list of tuple): [(x, y), ...]
+    Return:
+        (MarkerArray):
+    """
     marker_array = MarkerArray()
     points = get_marker_points()
     for loc in locs:
-        p1 = Point()
-        p1.x = loc[0]
-        p1.y = loc[1]
-        p1.z = 0.0
-        points.points.append(p1)
+        p = Point()
+        p.x = loc[0]
+        p.y = loc[1]
+        p.z = 0.0
+        points.points.append(p)
     marker_array.markers.append(points)
     return marker_array
 
 if __name__ == '__main__':
 
-    try:
-        solamr_2 = LinkedDrive()
-        rospy.init_node('linked_drive')
-        PUB_MARKER_ARRAY = rospy.Publisher(name="visualization_marker_array", data_class=MarkerArray, queue_size=1)
-        rate = rospy.Rate(solamr_2.RATE)
-        while not rospy.is_shutdown():
+    # -- global vars
+    FRONT_CMD_VEL = [0.0, 0.0]  # [v_linear, w_angular]
+    FRONT_POSE = [0.0, 0.0]  # [x, y]
+    FRONT_VEL = [0.0, 0.0]  # [v_linear, w_angular]
+    FRONT_ORI = [0.0, 0.0, 0.0, 0.0] # [x, y, z, w]
+    FRONT_TH = 0.0
 
+    CUR_POSE = [-1.0, 0.0]  # [x, y]
+    CUR_VEL = [0.0, 0.0]  # [lin, ang]
+    CUR_ORI = [0.0, 0.0, 0.0, 0.0]  # [x, y, z, w]
+    CUR_TH = 0.0
+
+    # -- rosnode
+    rospy.init_node('linked_drive')
+
+    rospy.Subscriber(name="/solamr_1/odom", data_class=Odometry, callback=_cb_f_pose)
+    rospy.Subscriber(name="/solamr_1/cmd_vel", data_class=Twist, callback=_cb_fp_cmdvel)
+    rospy.Subscriber(name="/solamr_2/odom", data_class=Odometry, callback=_cb_r_pose)
+    R_VEL_PUB = rospy.Publisher(name='/solamr_2/cmd_vel', data_class=Twist, queue_size=10)
+    PUB_MARKER_ARRAY = rospy.Publisher(name="visualization_marker_array", data_class=MarkerArray, queue_size=1)
+
+    # -- linked_drive loop
+    linked_drive = LinkedDrive()
+
+    try:
+        rate = rospy.Rate(hz=10)
+        while not rospy.is_shutdown():
             ros_t0 = rospy.get_time()
 
-#            ''' get predicted pose '''
-#            front_predict_pose = solamr_2.pose_update(solamr_2.front_pose, solamr_2.front_vel, solamr_2.front_th) #[x, y, th]
-#            ''' get quaternions '''
-#            fp_qua = t.quaternion_from_euler(0.0, 0.0, front_predict_pose[2])
-#            fo_qua = t.quaternion_from_euler(0.0, 0.0, solamr_2.cur_th)
-#            ''' get potential poses '''
-#            potential_poses = solamr_2.get_potential_poses()
-#            dict_reachable = solamr_2.vels_from_pose(potential_poses)
-#            reachable_poses = dict_reachable.keys()
-#            print(solamr_2.front_vel)
-            ''' update follower pose '''
-            optimized_vels = solamr_2.pose_optimization()
+            # -- update follower pose
+            rear_vels = linked_drive.get_opt_rear_vels()
 
             _twist = Twist()
-            _twist.linear.x = optimized_vels[0]
-            _twist.angular.z = optimized_vels[1]
-            solamr_2.r_vel_pub.publish(_twist)
+            _twist.linear.x = rear_vels[0]
+            _twist.angular.z = rear_vels[1]
+
+            R_VEL_PUB.publish(_twist)
 
             ros_td = rospy.get_time() - ros_t0
+
             if ros_td > 0 :
                 print("pub Hz = {0}".format(1.0/ros_td))
 
